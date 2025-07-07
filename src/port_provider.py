@@ -21,7 +21,7 @@ class PortService:
        self.ports = serial.tools.list_ports.comports()
 
     def get_arduino_ports(self) -> list[Port]:
-        variable_ports = list(filter(lambda port: "Arduino" in port.get_description(), self.get_port_information()))
+        variable_ports = list(filter(lambda port: ("Arduino" in port.get_description()) or ("USB-SERIAL" in port.get_description()), self.get_port_information()))
 
         if len(variable_ports) == 0:
             print("No Arduino ports found")

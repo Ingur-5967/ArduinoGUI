@@ -159,6 +159,8 @@ def main(page: Page):
 
 ArduinoReceiver().read_stream_data()
 print(f"Ports ARDUINO {[port.get_port_name() for port in PortService().get_arduino_ports()]}")
+print(f"Ports  {[port.get_port_name() for port in PortService().get_port_information()]}")
+print(f"Ports info {[port.get_description() for port in PortService().get_port_information()]}")
 print(f"Check connection ARDUINO (READ/WRITE) {ArduinoReceiver()._check_connection()}")
 
 flet.app(target=main)
