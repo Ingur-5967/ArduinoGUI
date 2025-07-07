@@ -1,0 +1,10 @@
+# arduino
+cooldown_stream_reader: None
+selected_listen_com_port: None
+
+# log
+log_directory_storage: C:\Users\slava\Documents\House Flipper\Profiles.backup\Profile 1
+data_directory_storage: None
+
+# dota type
+data_view_type: C|percent
