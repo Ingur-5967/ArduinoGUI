@@ -1,0 +1,7 @@
+# arduino
+cooldown_stream_reader: 5m
+selected_listen_com_port: none
+
+# log
+log_directory_storage: none
+data_directory_storage: none

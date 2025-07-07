@@ -1,19 +1,12 @@
-import datetime
-import glob
-import sys
-import time
-from sys import maxsize
-
 import flet
-from flet.core.alignment import Alignment, bottom_left
 from flet.core.buttons import ButtonStyle
 from flet.core.colors import Colors
 from flet.core.icons import Icons
 from flet.core.page import Page
-from flet.core.text_style import TextStyle, TextDecoration
+from flet.core.text_style import TextStyle
 from flet.core.types import FontWeight
 
-import serial.tools.list_ports
+from src.src.port_provider import PortService
 
 def main(page: Page):
 
@@ -24,16 +17,20 @@ def main(page: Page):
     page.window.max_width = 800
     page.window.max_height = 600
 
+    page.window.min_width = 800
+    page.window.min_height = 600
+
     def route_to_home(e):
         page.clean()
         right_board_container.content = flet.Column(
             controls=[
-                flet.Text("Вы перешли на главную!"),
-                flet.Text("Вы перешли на главную!"),
-                flet.Text("Вы перешли на главную!"),
-                flet.Text("Вы перешли на главную!")
+                flet.Text(
+                    value=f"Прослушиваемый порт: {PortService().get_arduino_ports()[0] if len(PortService().get_arduino_ports()) > 1 else "Нет активного порта"}",
+                    style=TextStyle(weight=FontWeight.W_500, size=16)
+                )
             ]
         )
+
         page.add(flet.Row(controls=[application_body]))
         page.update()
 
@@ -101,7 +98,17 @@ def main(page: Page):
     )
 
     wrapper_left_board_container = flet.Container(key="left_navigation_board_container", bgcolor=Colors.WHITE54, content=left_board_column, padding=flet.padding.only(left=15, top=25))
-    right_board_container = flet.Container(key="right_navigation_board_container", width=500, height=450, content=flet.Text("123"), bgcolor=Colors.BLUE)
+    right_board_container = flet.Container(
+        key="right_navigation_board_container",
+        width=500, height=450,
+        content=flet.Column(controls=[
+            flet.Text("Добро пожаловать!", style=TextStyle(weight=FontWeight.W_500)),
+            flet.Text("Программа читает данные с Arduino и строит по ним статистику"),
+            flet.Text("Перед началом выберите желаемый прослушиваемый COM-порт в настройках"),
+            flet.Text("Вы можете сохранять собранные данные в виде файлов, строить графики по выбранным периодам из доступных, просматривать логи работы программы"),
+            flet.Text("По умолчанию задержка между обращением к Arduino - 5min, но это можно изменить в настройках программы"),
+        ]),
+    )
 
     application_body = flet.Row(controls=[wrapper_left_board_container, right_board_container], spacing=25)
 

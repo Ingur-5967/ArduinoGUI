@@ -1,16 +1,29 @@
 import serial
 
-def check_variable_port_to_read(com_port: str):
-    try:
-        serial.Serial(com_port, 9600)
-        return True
-    except Exception:
-        return False
+import port_provider
 
-def read_stream_data(com_port: str, rate: int):
-    port = serial.Serial(com_port, rate)
+class ArduinoData:
+    def __init__(self):
+        pass
 
-    if not check_variable_port_to_read(com_port):
-        return None
+class ArduinoReceiver:
 
-    return port.readline().decode("utf-8").strip()
+    def __init__(self, arduino_port_index=0):
+        self.arduino_port_listen = port_provider.PortService().get_arduino_ports()[arduino_port_index]
+
+    def _check_connection(self, rate=9600) -> bool:
+        try:
+            serial.Serial(self.arduino_port_listen.get_port_name(), rate)
+            return True
+        except:
+            return False
+
+    def read_stream_data(self, rate=9600) -> ArduinoData:
+        if not self._check_connection():
+            return ArduinoData()
+
+        port = serial.Serial(self.arduino_port_listen.get_port_name(), rate)
+
+        receive_message = port.readline().decode("utf-8").strip()
+
+        # TODO: Wrapper message (JSON) -> ArduinoData
