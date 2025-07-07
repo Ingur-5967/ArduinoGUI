@@ -1,12 +1,16 @@
 import flet
 from flet.core.buttons import ButtonStyle
 from flet.core.colors import Colors
+from flet.core.file_picker import FilePickerResultEvent
 from flet.core.icons import Icons
 from flet.core.page import Page
 from flet.core.text_style import TextStyle
 from flet.core.types import FontWeight
 
+from src.src.arduino_receiver import ArduinoReceiver
 from src.src.port_provider import PortService
+from src.src.setting_controller import SettingConstSection
+
 
 def main(page: Page):
 
@@ -48,15 +52,52 @@ def main(page: Page):
         page.update()
 
     def route_to_settings(e):
+
+        def select_category(e):
+            field_category_container.clean()
+            path_selector = flet.TextField(value=dialog_options[select_category_setting.value])
+            field_category_container.content = flet.Column(controls=[path_selector])
+            page.update()
+
+
         page.clean()
-        right_board_container.content = flet.Column(
+
+        dialog_options = {
+            "Логи": "Директория для логов",
+            "Данные": "Директория для данных",
+            "Arduino": "Промежуток обращения к Arduino (MIN)",
+        }
+
+        setting_options = {
+            "Логи": SettingConstSection.LOG_DIRECTORY_STORAGE,
+            "Данные": SettingConstSection.LOG_DIRECTORY_STORAGE,
+            "Arduino": SettingConstSection.COOLDOWN_STREAM_READER,
+        }
+
+        select_category_setting = flet.Dropdown(
+            value="Выберите категорию",
+            options=[flet.DropdownOption(key) for key, value in setting_options.items()],
+            width=130,
+            on_change=select_category
+        )
+
+        field_category_container = flet.Container()
+
+        setting_body = flet.Column(
             controls=[
-                flet.Text("Вы перешли на настройки!"),
-                flet.Text("Вы перешли на настройки!"),
-                flet.Text("Вы перешли на настройки!"),
-                flet.Text("Вы перешли на настройки!")
+                flet.Text("Настройки приложения", style=TextStyle(weight=FontWeight.W_500, size=16)),
+                flet.Column(
+                    controls=[
+                        flet.Column(controls=[
+                            select_category_setting,
+                            field_category_container
+                        ])
+                    ]
+                )
             ]
         )
+
+        right_board_container.content = setting_body
         page.add(flet.Row(controls=[application_body]))
         page.update()
 
@@ -115,5 +156,9 @@ def main(page: Page):
     page.add(application_body)
 
     page.update()
+
+ArduinoReceiver().read_stream_data()
+print(f"Ports ARDUINO {[port.get_port_name() for port in PortService().get_arduino_ports()]}")
+print(f"Check connection ARDUINO (READ/WRITE) {ArduinoReceiver()._check_connection()}")
 
 flet.app(target=main)

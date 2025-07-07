@@ -9,7 +9,11 @@ class ArduinoData:
 class ArduinoReceiver:
 
     def __init__(self, arduino_port_index=0):
-        self.arduino_port_listen = port_provider.PortService().get_arduino_ports()[arduino_port_index]
+        self.arduino_port_listen = port_provider.PortService().get_arduino_ports()[arduino_port_index] if len(port_provider.PortService().get_arduino_ports()) > 0 else None
+
+        if self.arduino_port_listen is None:
+            print("Arduino Port is Empty")
+            pass
 
     def _check_connection(self, rate=9600) -> bool:
         try:
@@ -26,4 +30,4 @@ class ArduinoReceiver:
 
         receive_message = port.readline().decode("utf-8").strip()
 
-        # TODO: Wrapper message (JSON) -> ArduinoData
+        print(f"Received message from arduino ({self.arduino_port_listen.get_port_name()}) - {receive_message}")
