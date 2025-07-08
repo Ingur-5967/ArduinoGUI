@@ -1,8 +1,7 @@
-from typing import List
-
 import serial
 
-import port_provider
+from src.core.port_provider import PortService
+
 
 class ArduinoData:
 
@@ -19,7 +18,8 @@ class ArduinoData:
 class ArduinoReceiver:
 
     def __init__(self, arduino_port_index=0):
-        self.arduino_port_listen = port_provider.PortService().get_arduino_ports()[arduino_port_index] if len(port_provider.PortService().get_arduino_ports()) > 0 else None
+        self.arduino_port_listen = PortService().get_arduino_ports()[arduino_port_index] if len(
+            PortService().get_arduino_ports()) > 0 else None
 
     def _check_connection(self, rate=9600) -> bool:
         if self.arduino_port_listen is None: return False
@@ -44,7 +44,5 @@ class ArduinoReceiver:
 
         humidity_key = received_message_parsed[1].split(":")[0]
         humidity_value = received_message_parsed[1].split(":")[1]
-
-        print(temperature_key, temperature_value, humidity_key, humidity_value)
 
         return [ArduinoData(temperature_key, temperature_value), ArduinoData(humidity_key, humidity_value)]

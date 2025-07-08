@@ -24,7 +24,6 @@ class PortService:
         variable_ports = list(filter(lambda port: ("Arduino" in port.get_description()) or ("USB-SERIAL" in port.get_description()), self.get_port_information()))
 
         if len(variable_ports) == 0:
-            print("No Arduino ports found")
             return []
 
         return variable_ports
