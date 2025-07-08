@@ -159,6 +159,9 @@ def main(page: Page):
                 on_change=com_port_select
             )
 
+            if len(PortService().get_arduino_ports()) == 0:
+                dropdown_selector.options = [flet.DropdownOption("<Нет активных портов>")]
+
             path_selector = flet.TextField(
                 value=(dialog_options[select_category_setting.value] if setting_controller.get_parameter_by_key(setting_options[select_category_setting.value]).get_value_section() == "None" else setting_controller.get_parameter_by_key(setting_options[select_category_setting.value]).get_value_section()),
                 read_only=True

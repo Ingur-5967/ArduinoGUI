@@ -23,7 +23,6 @@ class ArduinoReceiver:
 
     def _check_connection(self, rate=9600) -> bool:
         if self.arduino_port_listen is None: return False
-
         try:
             serial.Serial(self.arduino_port_listen.get_port_name(), rate)
             return True
