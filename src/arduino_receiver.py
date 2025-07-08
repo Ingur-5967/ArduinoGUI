@@ -43,8 +43,8 @@ class ArduinoReceiver:
         temperature_key = received_message_parsed[0].split(":")[0]
         temperature_value = received_message_parsed[0].split(":")[1]
 
-        humidity_key = received_message_parsed[0].split(":")[0]
-        humidity_value = received_message_parsed[0].split(":")[1]
+        humidity_key = received_message_parsed[1].split(":")[0]
+        humidity_value = received_message_parsed[1].split(":")[1]
 
         print(temperature_key, temperature_value, humidity_key, humidity_value)
 

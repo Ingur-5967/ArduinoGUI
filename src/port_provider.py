@@ -25,7 +25,7 @@ class PortService:
 
         if len(variable_ports) == 0:
             print("No Arduino ports found")
-            return list()
+            return []
 
         return variable_ports
 
