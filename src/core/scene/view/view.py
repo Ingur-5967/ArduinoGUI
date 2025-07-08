@@ -12,7 +12,7 @@ class View(ABC):
         self.view_id = view_id
 
     @abc.abstractmethod
-    def load(self, scene: Scene, page: flet.Page):
+    def load(self, scene: Scene, page: flet.Page) -> None:
         pass
 
     def get_view_id(self) -> str:

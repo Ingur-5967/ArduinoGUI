@@ -7,13 +7,11 @@ from flet.core.types import FontWeight
 
 from src.core.scene.module.scene_module import SceneModule
 from src.core.scene.scene import Scene
-from src.core.scene.scene_service import SceneService
 
 class BoardModule(SceneModule):
 
     def __init__(self):
         super().__init__("board_module")
-        self.scene_service = SceneService()
 
     def init(self, page: flet.Page, scene: Scene) -> flet.Control:
 

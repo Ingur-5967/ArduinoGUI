@@ -2,7 +2,7 @@ import flet
 from flet.core.page import Page
 
 from src.core.scene.scene import Scene
-from src.core.scene.scene_service import SceneService
+from src.core.scene.scene_service import load_view
 from src.core.scene.view.impl.main_view import HomeView
 from src.core.scene.view.impl.settings_view import SettingsView
 from src.core.scene.view.impl.start_view import StartView
@@ -11,8 +11,7 @@ from src.core.scene.view.impl.start_view import StartView
 class Application:
     def __init__(self, scene: Scene):
         self.scene = scene
-        self.scene_service = SceneService()
-        self.scene.views = [StartView(), HomeView(), SettingsView()]
+        self.scene.init_views(StartView(), HomeView(), SettingsView())
 
     def main(self, page: Page):
         page.title = "Метеостанция"
@@ -23,7 +22,7 @@ class Application:
         page.window.min_width = 800
         page.window.min_height = 600
 
-        self.scene_service.load_view(self.scene, page, "start_view")
+        load_view(self.scene, page, "start_view")
 
     def get_scene_instance(self):
         return self.scene

@@ -12,7 +12,7 @@ class WelcomeModule(SceneModule):
         super().__init__("welcome_module", True)
 
     def init(self, page: flet.Page, scene: Scene) -> flet.Control:
-        board_container = flet.Container(
+        return flet.Container(
             key="right_navigation_board_container",
             width=500, height=450,
             content=flet.Column(controls=[
@@ -25,5 +25,3 @@ class WelcomeModule(SceneModule):
                     "По умолчанию задержка между обращением к Arduino - 5min, но это можно изменить в настройках программы"),
             ]),
         )
-
-        return board_container

@@ -115,7 +115,7 @@ class SettingsModule(SceneModule):
 
         field_category_container = flet.Container()
 
-        setting_body = flet.Column(
+        settings_body = flet.Column(
             controls=[
                 flet.Text("Настройки приложения", style=TextStyle(weight=FontWeight.W_500, size=16)),
                 flet.Column(
@@ -132,5 +132,5 @@ class SettingsModule(SceneModule):
         return flet.Container(
             key="right_container",
             width=500, height=450,
-            content=flet.Column(controls=[setting_body]),
+            content=flet.Column(controls=[settings_body]),
         )

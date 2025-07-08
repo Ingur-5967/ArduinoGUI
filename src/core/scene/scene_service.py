@@ -19,12 +19,9 @@ class SceneStorage:
     def get_modules(self) -> list[SceneModule]:
         return self.scenes
 
-class SceneService:
-
-    def load_view(self, scene: Scene, page: flet.Page, view_id: str) -> None:
-        scene.clean_active_modules()
-
-        try:
-            scene.get_view_by_id(view_id).load(scene, page)
-        except ModuleException:
-            page.add(flet.Text(value="Modules not loaded because of exception!"))
+def load_view(scene: Scene, page: flet.Page, view_id: str) -> None:
+    scene.clean_active_modules()
+    try:
+        scene.get_view_by_id(view_id).load(scene, page)
+    except ModuleException:
+        page.add(flet.Text(value="Modules not loaded because of exception!"))
