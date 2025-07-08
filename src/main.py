@@ -9,12 +9,12 @@ from flet.core.page import Page
 from flet.core.text_style import TextStyle
 from flet.core.types import FontWeight
 
+from src.arduino_receiver import ArduinoReceiver
 from src.port_provider import PortService
 from src.setting_controller import SettingConstSection, SettingController
 
 
 def main(page: Page):
-
     page.title = "Arduino receiver signals"
     page.window.width = 800
     page.window.height = 600
@@ -26,10 +26,17 @@ def main(page: Page):
     page.window.min_height = 600
 
     def route_to_home(e):
+
         page.clean()
 
         def refresh_data_stream_reader(e):
             data_stream_reader_title.value = f"Полученные данные за {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+
+            updated_received_data = ArduinoReceiver().read_stream_data()
+
+            temperature_text.value = f"Температура: {updated_received_data[0].get_value()}"
+            humidity_text.value = f"Влажность: {updated_received_data[1].get_value()}"
+
             page.update()
 
         warning_text = flet.Text(
@@ -41,6 +48,14 @@ def main(page: Page):
                             value=f"Полученные данные за {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
                             style=TextStyle(size=15, weight=FontWeight.W_400)
         )
+
+        arduino_received_data = ArduinoReceiver().read_stream_data()
+
+        temperature_text = flet.Text(
+            value=f"Температура: {arduino_received_data[0].get_value() if not arduino_received_data.__contains__(None) else "{Runtime error}"}",
+            style=TextStyle(size=17, weight=FontWeight.W_500)
+        )
+        humidity_text = flet.Text(value=f"Влажность: {arduino_received_data[1].get_value() if not arduino_received_data.__contains__(None) else "{Runtime error}"}", style=TextStyle(size=17, weight=FontWeight.W_500))
 
         reader_application_body = flet.Column(
             controls=[
@@ -55,13 +70,13 @@ def main(page: Page):
                         flet.Row(
                             controls=[
                                 flet.Icon(name=Icons.SEVERE_COLD),
-                                flet.Text(value=f"Температура: 123", style=TextStyle(size=17, weight=FontWeight.W_500))
+                                temperature_text
                             ]
                         ),
                         flet.Row(
                             controls=[
                                 flet.Icon(name=Icons.CLOUD),
-                                flet.Text(value=f"Влажность: 12%", style=TextStyle(size=17, weight=FontWeight.W_500))
+                                humidity_text
                             ]
                         )
                     ],
@@ -135,8 +150,6 @@ def main(page: Page):
             page.update()
 
             field_category_container.clean()
-
-            print([port.get_port_name() for port in PortService().get_arduino_ports()])
 
             dropdown_selector = flet.Dropdown(
                 width=200,
