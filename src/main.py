@@ -74,7 +74,7 @@ def main(page: Page):
         right_board_container.content = flet.Column(
             controls=[
                 flet.Text(
-                    value=f"Прослушиваемый порт: {PortService().get_arduino_ports()[0] if len(PortService().get_arduino_ports()) != 0 else "Нет активного порта"}",
+                    value=f"Прослушиваемый порт: {PortService().get_arduino_ports()[0].get_port_name() if len(PortService().get_arduino_ports()) != 0 else "Нет активного порта"}",
                     style=TextStyle(weight=FontWeight.W_500, size=16)
                 ),
                 reader_application_body if len(PortService().get_arduino_ports()) > 0 else warning_text
@@ -141,7 +141,7 @@ def main(page: Page):
             dropdown_selector = flet.Dropdown(
                 width=200,
                 options=[
-                    port.get_port_name() for port in PortService().get_arduino_ports()
+                    flet.DropdownOption(port.get_port_name()) for port in PortService().get_arduino_ports()
                 ],
                 on_change=com_port_select
             )
