@@ -8,7 +8,7 @@ class Setting:
         return self.key_section
 
     def get_value_section(self) -> str:
-        return self.value_section
+        return self.value_section.strip()
 
 class SettingConstSection:
     COOLDOWN_STREAM_READER="cooldown_stream_reader"
@@ -19,11 +19,12 @@ class SettingConstSection:
 class SettingController:
 
     def __init__(self, file='assets/config/settings.yml'):
-        file = open(file, "r")
+        self.file = file
+        reader = open(self.file, "r")
 
         self.setting_container = list[Setting]()
 
-        for line in file.readlines():
+        for line in reader.readlines():
             if not line.__contains__(':'): continue
 
             key, value = line.replace('\n', '').strip().split(':', 1)
@@ -37,3 +38,10 @@ class SettingController:
             return None
 
         return setting_section[0]
+
+    def get_parameter_line_by_key(self, key: str) -> str:
+        parameter = self.get_parameter_by_key(key)
+        return parameter.get_key_section() + ": " + parameter.get_value_section()
+
+    def get_config_file_path(self) -> str:
+        return self.file

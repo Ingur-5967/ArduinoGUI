@@ -1,7 +1,7 @@
 # arduino
-cooldown_stream_reader: 5m
-selected_listen_com_port: none
+cooldown_stream_reader: C:\Users\slava\Documents\House Flipper
+selected_listen_com_port: None
 
 # log
-log_directory_storage: none
-data_directory_storage: none
+log_directory_storage: None
+data_directory_storage: None

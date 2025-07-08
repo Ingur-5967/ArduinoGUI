@@ -1,3 +1,7 @@
+import os.path
+import pathlib
+from os import PathLike
+
 import flet
 from flet.core.buttons import ButtonStyle
 from flet.core.colors import Colors
@@ -7,9 +11,9 @@ from flet.core.page import Page
 from flet.core.text_style import TextStyle
 from flet.core.types import FontWeight
 
-from src.src.arduino_receiver import ArduinoReceiver
-from src.src.port_provider import PortService
-from src.src.setting_controller import SettingConstSection
+from src.arduino_receiver import ArduinoReceiver
+from src.port_provider import PortService
+from src.setting_controller import SettingConstSection, SettingController
 
 
 def main(page: Page):
@@ -54,11 +58,43 @@ def main(page: Page):
     def route_to_settings(e):
 
         def select_category(e):
-            field_category_container.clean()
-            path_selector = flet.TextField(value=dialog_options[select_category_setting.value])
-            field_category_container.content = flet.Column(controls=[path_selector])
+            setting_controller = SettingController()
+            def on_dir_selected(e: flet.FilePickerResultEvent):
+                if e.path:
+                    path_selector.value = f"{e.path}"
+
+                page.update()
+
+            def save_changes(e):
+                section = setting_options[select_category_setting.value]
+
+                if not os.path.isdir(path_selector.value):
+                    pass
+                else:
+                    with open(setting_controller.get_config_file_path(), 'r') as file:
+                        data = file.read()
+                        data = data.replace(setting_controller.get_parameter_line_by_key(section), f"{section}: {path_selector.value}")
+
+                    with open(setting_controller.get_config_file_path(), 'w') as file:
+                        file.write(data)
+
+            file_picker = flet.FilePicker(on_result=on_dir_selected)
+            page.overlay.append(file_picker)
             page.update()
 
+            field_category_container.clean()
+            path_selector = flet.TextField(
+                value=(dialog_options[select_category_setting.value] if setting_controller.get_parameter_by_key(setting_options[select_category_setting.value]).get_value_section() == "None" else setting_controller.get_parameter_by_key(setting_options[select_category_setting.value]).get_value_section()),
+                read_only=True
+            )
+            field_category_container.content = flet.Column(controls=[
+                flet.Row(controls=[
+                    path_selector,
+                    flet.ElevatedButton(text="Выбрать папку", icon=Icons.EDIT, on_click=lambda _: file_picker.get_directory_path())
+                ]),
+                flet.TextButton(text="Сохранить изменения", on_click=save_changes)
+            ])
+            page.update()
 
         page.clean()
 
@@ -70,7 +106,7 @@ def main(page: Page):
 
         setting_options = {
             "Логи": SettingConstSection.LOG_DIRECTORY_STORAGE,
-            "Данные": SettingConstSection.LOG_DIRECTORY_STORAGE,
+            "Данные": SettingConstSection.DATA_DIRECTORY_STORAGE,
             "Arduino": SettingConstSection.COOLDOWN_STREAM_READER,
         }
 
