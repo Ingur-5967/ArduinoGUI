@@ -1,17 +1,14 @@
+import datetime
 import os.path
-import pathlib
-from os import PathLike
 
 import flet
 from flet.core.buttons import ButtonStyle
 from flet.core.colors import Colors
-from flet.core.file_picker import FilePickerResultEvent
 from flet.core.icons import Icons
 from flet.core.page import Page
 from flet.core.text_style import TextStyle
 from flet.core.types import FontWeight
 
-from src.arduino_receiver import ArduinoReceiver
 from src.port_provider import PortService
 from src.setting_controller import SettingConstSection, SettingController
 
@@ -30,13 +27,60 @@ def main(page: Page):
 
     def route_to_home(e):
         page.clean()
+
+        def refresh_data_stream_reader(e):
+            data_stream_reader_title.value = f"Полученные данные за {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            page.update()
+
+        warning_text = flet.Text(
+            value="Невозможно открыть поток чтения данных, так как у вас не назначен прослушиваемый порт Arduino!\n\n"
+                  "Перейдите в настройки, чтобы изменить COM-порт"
+        )
+
+        data_stream_reader_title = flet.Text(
+                            value=f"Полученные данные за {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+                            style=TextStyle(size=15, weight=FontWeight.W_400)
+        )
+
+        reader_application_body = flet.Column(
+            controls=[
+                flet.Row(
+                    controls=[
+                        data_stream_reader_title,
+                        flet.IconButton(icon=Icons.REFRESH, on_click=refresh_data_stream_reader)
+                    ]
+                ),
+                flet.Column(
+                    controls=[
+                        flet.Row(
+                            controls=[
+                                flet.Icon(name=Icons.SEVERE_COLD),
+                                flet.Text(value=f"Температура: 123", style=TextStyle(size=17, weight=FontWeight.W_500))
+                            ]
+                        ),
+                        flet.Row(
+                            controls=[
+                                flet.Icon(name=Icons.CLOUD),
+                                flet.Text(value=f"Влажность: 12%", style=TextStyle(size=17, weight=FontWeight.W_500))
+                            ]
+                        )
+                    ],
+                    spacing=19
+                )
+            ],
+            spacing=15,
+        )
+
         right_board_container.content = flet.Column(
             controls=[
                 flet.Text(
                     value=f"Прослушиваемый порт: {PortService().get_arduino_ports()[0] if len(PortService().get_arduino_ports()) > 1 else "Нет активного порта"}",
                     style=TextStyle(weight=FontWeight.W_500, size=16)
-                )
-            ]
+                ),
+                reader_application_body
+
+            ],
+            spacing=25
         )
 
         page.add(flet.Row(controls=[application_body]))
@@ -143,7 +187,8 @@ def main(page: Page):
                     text="Главная",
                     icon=Icons.HOME,
                     style=ButtonStyle(icon_size=25, text_style=TextStyle(size=17, weight=FontWeight.W_500)),
-                    on_click=route_to_home,
+                    width=150,
+                    on_click=route_to_home
     )
 
     statistic_button = flet.TextButton(
@@ -151,7 +196,17 @@ def main(page: Page):
                     text="Статистика",
                     icon=Icons.QUERY_STATS,
                     style=ButtonStyle(icon_size=25, text_style=TextStyle(size=17, weight=FontWeight.W_500)),
-                    on_click=route_to_statistic,
+                    width=150,
+                    on_click=route_to_statistic
+    )
+
+    entries_button = flet.TextButton(
+                    key="entry_navigation_button",
+                    text="Записи",
+                    icon=Icons.EVENT,
+                    style=ButtonStyle(icon_size=25, text_style=TextStyle(size=17, weight=FontWeight.W_500)),
+                    width=150,
+                    on_click=route_to_statistic
     )
 
     settings_button = flet.TextButton(
@@ -159,7 +214,8 @@ def main(page: Page):
                     text="Настройки",
                     icon=Icons.SETTINGS,
                     style=ButtonStyle(icon_size=25, text_style=TextStyle(size=17, weight=FontWeight.W_500)),
-                    on_click=route_to_settings,
+                    width=150,
+                    on_click=route_to_settings
     )
 
     left_board_column = flet.Column(
@@ -169,6 +225,7 @@ def main(page: Page):
         controls=[
             flet.Row(controls=[home_button]),
             flet.Row(controls=[statistic_button]),
+            flet.Row(controls=[entries_button]),
             flet.Row(controls=[settings_button]),
         ],
         spacing=30

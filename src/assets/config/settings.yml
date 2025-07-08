@@ -1,7 +1,11 @@
 # arduino
-cooldown_stream_reader: C:\Users\slava\Documents\House Flipper
+cooldown_stream_reader: None
 selected_listen_com_port: None
 
 # log
 log_directory_storage: None
 data_directory_storage: None
+
+# dota type
+temperature_data_view_type: C
+humm_data_view_type: percent
