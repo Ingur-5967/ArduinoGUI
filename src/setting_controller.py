@@ -12,9 +12,13 @@ class Setting:
 
 class SettingConstSection:
     COOLDOWN_STREAM_READER="cooldown_stream_reader"
+
     SELECTED_LISTEN_COM_PORT="selected_listen_com_port"
+
     LOG_DIRECTORY_STORAGE="log_directory_storage"
     DATA_DIRECTORY_STORAGE="data_directory_storage"
+
+    DATA_VIEW_TYPE="data_view_type"
 
 class SettingController:
 

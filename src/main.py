@@ -77,7 +77,7 @@ def main(page: Page):
                     value=f"Прослушиваемый порт: {PortService().get_arduino_ports()[0] if len(PortService().get_arduino_ports()) > 1 else "Нет активного порта"}",
                     style=TextStyle(weight=FontWeight.W_500, size=16)
                 ),
-                reader_application_body
+                reader_application_body if len(PortService().get_arduino_ports()) > 0 else warning_text
 
             ],
             spacing=25
@@ -122,11 +122,28 @@ def main(page: Page):
                     with open(setting_controller.get_config_file_path(), 'w') as file:
                         file.write(data)
 
+            def com_port_select(e):
+                if dropdown_selector.value.startswith("<") and dropdown_selector.value.endswith(">"):
+                   dropdown_selector.key = "Select"
+                   dropdown_selector.value = ""
+                   dropdown_selector.update()
+
+                page.update()
+
             file_picker = flet.FilePicker(on_result=on_dir_selected)
             page.overlay.append(file_picker)
             page.update()
 
             field_category_container.clean()
+
+            dropdown_selector = flet.Dropdown(
+                width=200,
+                options=[
+                    (flet.DropdownOption(port.get_port_name()) for port in PortService().get_arduino_ports()) if len(PortService().get_arduino_ports()) > 0 else flet.DropdownOption("<Порты отсутствуют>")
+                ],
+                on_change=com_port_select
+            )
+
             path_selector = flet.TextField(
                 value=(dialog_options[select_category_setting.value] if setting_controller.get_parameter_by_key(setting_options[select_category_setting.value]).get_value_section() == "None" else setting_controller.get_parameter_by_key(setting_options[select_category_setting.value]).get_value_section()),
                 read_only=True
@@ -137,7 +154,15 @@ def main(page: Page):
                     flet.ElevatedButton(text="Выбрать папку", icon=Icons.EDIT, on_click=lambda _: file_picker.get_directory_path())
                 ]),
                 flet.TextButton(text="Сохранить изменения", on_click=save_changes)
-            ])
+            ]) \
+                if select_category_setting.value != "Arduino" else flet.Column(
+                    controls=[
+                        dropdown_selector,
+                        flet.TextButton(text="Сохранить изменения", on_click=save_changes)
+                    ],
+
+            )
+
             page.update()
 
         page.clean()
@@ -152,6 +177,7 @@ def main(page: Page):
             "Логи": SettingConstSection.LOG_DIRECTORY_STORAGE,
             "Данные": SettingConstSection.DATA_DIRECTORY_STORAGE,
             "Arduino": SettingConstSection.COOLDOWN_STREAM_READER,
+            "Data types": SettingConstSection.DATA_VIEW_TYPE,
         }
 
         select_category_setting = flet.Dropdown(
@@ -171,8 +197,8 @@ def main(page: Page):
                         flet.Column(controls=[
                             select_category_setting,
                             field_category_container
-                        ])
-                    ]
+                        ], spacing=20)
+                    ],
                 )
             ]
         )

@@ -7,5 +7,4 @@ log_directory_storage: None
 data_directory_storage: None
 
 # dota type
-temperature_data_view_type: C
-humm_data_view_type: percent
+data_view_type: C|percent
