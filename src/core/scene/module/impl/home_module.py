@@ -43,7 +43,6 @@ class HomeModule(SceneModule):
 
         def save_entry(e):
             data_config_path = self.config.get_parameter_by_key(SettingConstSection.DATA_DIRECTORY_STORAGE)
-            print(data_config_path.get_value_section() == 'None')
 
             if data_config_path.get_value_section() == 'None':
                 print("Not found path (Empty)")
@@ -56,25 +55,16 @@ class HomeModule(SceneModule):
 
             lines = data_file.read()
 
-            print(lines)
-
             parsed_entry_date = data_stream_reader_title.value.split(" ")[3]
             parsed_entry_temperature = temperature_text.value.split(" ")[1]
             parsed_entry_humidity = humidity_text.value.split(" ")[1]
-
-            print(parsed_entry_date, parsed_entry_temperature, parsed_entry_humidity)
 
             lines['data'][parsed_entry_date] = {
                 'temperature': parsed_entry_temperature,
                 'humidity': parsed_entry_humidity
             }
 
-            print(lines)
-
-            print(''.join(lines))
-            print(''.join(lines['data'][parsed_entry_date]))
-
-            data_file.write(''.join(lines))
+            data_file.write(lines)
 
         warning_text = flet.Text(
             value="Невозможно открыть поток чтения данных, так как у вас не назначен прослушиваемый порт Arduino!\n\n"

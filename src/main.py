@@ -33,6 +33,5 @@ class Application:
 
 application = Application(Scene())
 
-print(SettingController().get_parameter_by_key(SettingConstSection.LOG_DIRECTORY_STORAGE))
 
 flet.app(target=application.main)
