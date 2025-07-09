@@ -7,8 +7,6 @@ from src.core.scene.view.impl.history_view import HistoryView
 from src.core.scene.view.impl.main_view import HomeView
 from src.core.scene.view.impl.settings_view import SettingsView
 from src.core.scene.view.impl.start_view import StartView
-from src.core.setting_controller import SettingController, SettingConstSection
-
 
 class Application:
     def __init__(self, scene: Scene):
