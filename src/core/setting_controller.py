@@ -42,7 +42,7 @@ class SettingController:
         if setting_section is None:
             return None
 
-        return setting_section.get_value_section()
+        return setting_section
 
     def get_parameter_line_by_key(self, key: str) -> str:
         parameter = self.get_parameter_by_key(key)
