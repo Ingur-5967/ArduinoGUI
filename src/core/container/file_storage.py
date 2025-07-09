@@ -2,8 +2,8 @@ from src.core.exception.FileException import FileException
 from src.core.scene.file_service import File
 
 class FileNaming:
-    LOG_FILE_NAME = "log.yml"
-    DATA_FILE_NAME = "data.yml"
+    LOG_FILE_NAME = "log.yaml"
+    DATA_FILE_NAME = "data.yaml"
 
 class SystemFileStorage:
 

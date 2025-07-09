@@ -44,6 +44,7 @@ class HomeModule(SceneModule):
         def save_entry(e):
             data_config_path = self.config.get_parameter_by_key(SettingConstSection.DATA_DIRECTORY_STORAGE)
             print(data_config_path.get_value_section() == 'None')
+
             if data_config_path.get_value_section() == 'None':
                 print("Not found path (Empty)")
                 return

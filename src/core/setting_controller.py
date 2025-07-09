@@ -33,15 +33,16 @@ class SettingController:
 
             key, value = line.replace('\n', '').strip().split(':', 1)
 
-            self.setting_container.append(Setting(key, value))
+            self.setting_container.append(Setting(key, value.strip()))
 
     def get_parameter_by_key(self, key: str) -> Setting | None:
-        setting_section = list(filter(lambda finder: finder.get_key_section() == key, self.setting_container))
 
-        if len(setting_section) == 0 or len(setting_section) > 1:
+        setting_section = next(filter(lambda setting: setting.get_key_section() == key, self.setting_container))
+
+        if setting_section is None:
             return None
 
-        return setting_section[0]
+        return setting_section.get_value_section()
 
     def get_parameter_line_by_key(self, key: str) -> str:
         parameter = self.get_parameter_by_key(key)
