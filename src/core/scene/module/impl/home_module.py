@@ -43,8 +43,8 @@ class HomeModule(SceneModule):
 
         def save_entry(e):
             data_config_path = self.config.get_parameter_by_key(SettingConstSection.DATA_DIRECTORY_STORAGE)
-
-            if data_config_path.get_value_section() == 'None' or not os.path.isdir(data_config_path.get_value_section()):
+            print(data_config_path.get_value_section() == 'None')
+            if data_config_path.get_value_section() == 'None':
                 print("Not found path (Empty)")
                 return
 
@@ -54,6 +54,8 @@ class HomeModule(SceneModule):
                 data_file.create("")
 
             lines = data_file.read()
+
+            print(lines)
 
             parsed_entry_date = data_stream_reader_title.value.split(" ")[3]
             parsed_entry_temperature = temperature_text.value.split(" ")[1]

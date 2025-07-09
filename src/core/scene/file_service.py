@@ -18,8 +18,8 @@ class File:
 
         return True
 
-    def read(self) -> list[str]:
-        if not self.exists(): return []
+    def read(self) -> dict:
+        if not self.exists(): return dict()
         with open(f"{self.path}/{self.file_name}", 'r') as file:
             return yaml.safe_load(file)
 
