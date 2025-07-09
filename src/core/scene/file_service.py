@@ -21,7 +21,7 @@ class File:
     def read(self) -> dict:
         if not self.exists(): return dict()
         with open(f"{self.path}/{self.file_name}", 'r') as file:
-            data = yaml.safe_load(file) or {}
+            data = yaml.safe_load(file) or {"data": {}}
 
         return data
 

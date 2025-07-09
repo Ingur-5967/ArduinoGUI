@@ -56,10 +56,11 @@ class HomeModule(SceneModule):
             lines = data_file.read()
 
             parsed_entry_date = data_stream_reader_title.value.split(" ")[3]
+            parsed_entry_date_time = data_stream_reader_title.value.split(" ")[4]
             parsed_entry_temperature = temperature_text.value.split(" ")[1]
             parsed_entry_humidity = humidity_text.value.split(" ")[1]
 
-            lines['data'][parsed_entry_date] = {
+            lines['data'][f'{parsed_entry_date} {parsed_entry_date_time}'] = {
                 'temperature': parsed_entry_temperature,
                 'humidity': parsed_entry_humidity
             }
@@ -69,6 +70,7 @@ class HomeModule(SceneModule):
         warning_text = flet.Text(
             value="Невозможно открыть поток чтения данных, так как у вас не назначен прослушиваемый порт Arduino!\n\n"
                   "Перейдите в настройки, чтобы изменить COM-порт"
+
         )
 
         data_stream_reader_title = flet.Text(
