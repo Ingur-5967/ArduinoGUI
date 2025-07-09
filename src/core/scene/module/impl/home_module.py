@@ -60,8 +60,7 @@ class HomeModule(SceneModule):
             controls=[
                 flet.Row(
                     controls=[
-                        data_stream_reader_title, refresh_button
-                        flet.IconButton(icon=Icons.REFRESH, on_click=refresh_data_stream_reader)
+                        data_stream_reader_title, refresh_button,
                     ]
                 ),
                 flet.Column(
