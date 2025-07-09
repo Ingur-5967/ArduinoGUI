@@ -1,4 +1,5 @@
 import datetime
+import os.path
 
 import flet
 from flet.core.icons import Icons
@@ -6,15 +7,19 @@ from flet.core.text_style import TextStyle
 from flet.core.types import FontWeight
 
 from src.core.arduino_receiver import ArduinoReceiver
+from src.core.container.file_storage import FileNaming
 from src.core.port_provider import PortService
+from src.core.scene.file_service import File
 from src.core.scene.module.scene_module import SceneModule
 from src.core.scene.scene import Scene
+from src.core.setting_controller import SettingController, SettingConstSection
 
 
 class HomeModule(SceneModule):
 
     def __init__(self):
         super().__init__("home_module", True)
+        self.config = SettingController()
 
     def init(self, page: flet.Page, scene: Scene) -> flet.Control:
         def refresh_data_stream_reader(e):
@@ -35,6 +40,38 @@ class HomeModule(SceneModule):
             refresh_button.disabled = False
 
             page.update()
+
+        def save_entry(e):
+            data_config_path = self.config.get_parameter_by_key(SettingConstSection.DATA_DIRECTORY_STORAGE)
+
+            if data_config_path.get_value_section() == 'None' or not os.path.isdir(data_config_path.get_value_section()):
+                print("Not found path (Empty)")
+                return
+
+            data_file = File(data_config_path.get_value_section(), FileNaming.DATA_FILE_NAME)
+
+            if not data_file.exists():
+                data_file.create("")
+
+            lines = data_file.read()
+
+            parsed_entry_date = data_stream_reader_title.value.split(" ")[3]
+            parsed_entry_temperature = temperature_text.value.split(" ")[1]
+            parsed_entry_humidity = humidity_text.value.split(" ")[1]
+
+            print(parsed_entry_date, parsed_entry_temperature, parsed_entry_humidity)
+
+            lines['data'][parsed_entry_date] = {
+                'temperature': parsed_entry_temperature,
+                'humidity': parsed_entry_humidity
+            }
+
+            print(lines)
+
+            print(''.join(lines))
+            print(''.join(lines['data'][parsed_entry_date]))
+
+            data_file.write(''.join(lines))
 
         warning_text = flet.Text(
             value="Невозможно открыть поток чтения данных, так как у вас не назначен прослушиваемый порт Arduino!\n\n"
@@ -79,7 +116,7 @@ class HomeModule(SceneModule):
                         ),
                         flet.Row(
                             controls=[
-                                flet.TextButton(text="Сохранить запись", icon=Icons.SAVE)
+                                flet.TextButton(text="Сохранить запись", icon=Icons.SAVE, on_click=save_entry)
                             ]
                         )
                     ],
