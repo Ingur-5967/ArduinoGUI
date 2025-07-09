@@ -49,6 +49,25 @@ class HistoryModule(SceneModule):
             flet.Text(value=f"Content-{i}", bgcolor=Colors.GREY) for i in range(10)]
         )
 
+        warning_text_title = flet.Text(
+            value="Warning!",
+            color=Colors.RED,
+            style=TextStyle(size=15, weight=FontWeight.W_700)
+        )
+        warning_text_body = flet.Text(
+            value="Обнаружена аномально высокая температура (33) в течении N минут\nСоветуем переместиться ближе к водоемам",
+            color=Colors.BLACK, style=TextStyle(size=13, weight=FontWeight.W_400)
+        )
+
+        warning_container = flet.Container(
+            content=flet.Column(
+                controls=[
+                    warning_text_title,
+                    warning_text_body,
+                    flet.TextButton(text="Постановление Роспотребнадзора", icon=Icons.WARNING)
+                ],spacing=5)
+        )
+
         return flet.Container(
             key="right_container",
             width=500, height=450,
@@ -58,6 +77,8 @@ class HistoryModule(SceneModule):
                     flet.Row(controls=[date_time_text, data_choose_calendar], spacing=10),
                     flet.TextButton(text="Выбрать дату", icon=Icons.CALENDAR_TODAY, on_click=lambda e: page.open(data_choose_calendar))
                 ]),
-                entries_list_view
+                entries_list_view,
+
+                warning_container
             ], spacing=25)
         )
