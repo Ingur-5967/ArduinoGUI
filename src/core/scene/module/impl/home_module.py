@@ -74,7 +74,7 @@ class HomeModule(SceneModule):
         )
 
         data_stream_reader_title = flet.Text(
-                            value=f"Полученные данные за {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+                            value=f"Полученные данные за {datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S')}",
                             style=TextStyle(size=15, weight=FontWeight.W_400)
         )
 

@@ -37,10 +37,14 @@ class HistoryModule(SceneModule):
 
                 file_steam_reader = data_file.read()
 
+
+
                 for index, entry in enumerate(file_steam_reader["data"].keys()):
 
                     entry_date = entry.split(" ")[0]
                     entry_time = entry.split(" ")[1]
+
+                    if entry_date != e.control.value.strftime('%m/%d/%Y'): continue
 
                     data_containers.append(
                         flet.Container(
@@ -64,13 +68,19 @@ class HistoryModule(SceneModule):
                         ], spacing=10), height=90, bgcolor=Colors.GREY_50)
                     )
 
-                    print(entry_date, entry_time)
+                if len(data_containers) > 0:
+                    entries_counter_text.value = f"Обнаружено записей: {len(data_containers)}"
+                    entries_counter_text.visible = True
 
-                entries_counter_text.value = f"Обнаружено записей: {len(file_steam_reader["data"].keys())}"
-                entries_counter_text.visible = True
+                    for container in data_containers:
+                        entries_list_view.controls.append(container)
 
-                for container in data_containers:
-                    entries_list_view.controls.append(container)
+                    container_content.controls.append(entries_list_view)
+                else:
+                    entries_counter_text.value = f"За выбранный период {e.control.value.strftime('%m/%d/%Y')} не найдено ни одной записи, полученной с Arduino"
+                    entries_counter_text.visible = True
+                    container_content.controls.remove(entries_list_view)
+                    entries_list_view.controls.clear()
 
             page.update()
 
@@ -89,9 +99,9 @@ class HistoryModule(SceneModule):
 
         date_time_text = flet.Text(value="Текущая дата: Не выбранная дата")
 
-        entries_list_view = flet.ListView(spacing=15, padding=10, width=500, height=200, controls=[])
+        entries_list_view = flet.ListView(spacing=15, padding=10, width=500, height=270, controls=[])
 
-        entries_counter_text = flet.Text(value="Обнаружено записей: 0", visible=False, style=TextStyle(size=16, weight=FontWeight.W_500))
+        entries_counter_text = flet.Text(visible=False, style=TextStyle(size=16, weight=FontWeight.W_500))
 
 
         warning_text_title = flet.Text(
@@ -113,17 +123,18 @@ class HistoryModule(SceneModule):
                 ], spacing=5)
         )
 
-        return flet.Container(
-            key="right_container",
-            width=500, height=450,
-            content=flet.Column(controls=[
+        container_content = flet.Column(controls=[
                 flet.Column(controls=[
                     entries_title,
                     flet.Row(controls=[date_time_text, data_choose_calendar], spacing=5),
                     flet.TextButton(text="Выбрать дату", icon=Icons.CALENDAR_TODAY, on_click=lambda e: page.open(data_choose_calendar)),
                 ]),
-                entries_counter_text,
-                entries_list_view,
-                warning_container
-            ], spacing=25)
+                entries_counter_text
+            ], spacing=15 if len(entries_list_view.controls) > 0 else 8
+        )
+
+        return flet.Container(
+            key="right_container",
+            width=500, height=450,
+            content=container_content
         )
