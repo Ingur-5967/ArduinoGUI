@@ -4,7 +4,7 @@ selected_listen_com_port: None
 
 # log
 log_directory_storage: None
-data_directory_storage: None
+data_directory_storage: C:\Users\slava\Downloads\Phone Link
 
 # dota type
 data_view_type: C|percent

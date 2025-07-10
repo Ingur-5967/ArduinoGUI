@@ -19,7 +19,7 @@ class File:
         return True
 
     def read(self) -> dict:
-        if not self.exists(): return dict()
+        if not self.exists(): return {"data": {}}
         with open(f"{self.path}/{self.file_name}", 'r') as file:
             data = yaml.safe_load(file) or {"data": {}}
 

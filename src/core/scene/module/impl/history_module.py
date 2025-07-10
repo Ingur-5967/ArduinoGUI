@@ -6,8 +6,11 @@ from flet.core.icons import Icons
 from flet.core.text_style import TextStyle
 from flet.core.types import FontWeight
 
+from src.core.container.file_storage import FileNaming
+from src.core.scene.file_service import File
 from src.core.scene.module.scene_module import SceneModule
 from src.core.scene.scene import Scene
+from src.core.setting_controller import SettingController, SettingConstSection
 
 
 class HistoryModule(SceneModule):
@@ -16,23 +19,64 @@ class HistoryModule(SceneModule):
         super().__init__("history_module", True)
 
     def init(self, page: flet.Page, scene: Scene) -> flet.Control:
-
+        setting_controller = SettingController()
         def handle_change(e):
-
             date_time_text.value = f"Текущая дата: {e.control.value.strftime('%m/%d/%Y')}"
-            page.update()
 
-        entries_counter_container = flet.Container(
-            content=flet.Text(value="45 записей", color=Colors.WHITE, style=TextStyle(size=13, weight=FontWeight.W_400)),
-            padding=flet.padding.all(5),
-            border_radius=12,
-            bgcolor=Colors.GREY
-        )
+            data_directory_path = setting_controller.get_parameter_by_key(SettingConstSection.DATA_DIRECTORY_STORAGE)
+
+            if data_directory_path is None:
+                pass
+            else:
+
+                data_file = File(data_directory_path.get_value_section(), FileNaming.DATA_FILE_NAME)
+
+                if len(data_file.read()) == 0: pass
+
+                data_containers = []
+
+                file_steam_reader = data_file.read()
+
+                for index, entry in enumerate(file_steam_reader["data"].keys()):
+
+                    entry_date = entry.split(" ")[0]
+                    entry_time = entry.split(" ")[1]
+
+                    data_containers.append(
+                        flet.Container(
+                            content=flet.Column(controls=[
+                            flet.Text(value=f"Данные за {entry_date} {entry_time}"),
+                            flet.Row(controls=[
+                                flet.Icon(name=Icons.SEVERE_COLD),
+                                flet.Text(
+                                    value=f"Температура: {file_steam_reader["data"][f"{entry_date} {entry_time}"]["temperature"]}",
+                                    style=TextStyle(size=15, weight=FontWeight.W_500)
+                                )], spacing=5
+                            ),
+                            flet.Row(controls=[
+                                flet.Icon(name=Icons.CLOUD),
+                                flet.Text(
+                                    value=f"Влажность: {file_steam_reader["data"][f"{entry_date} {entry_time}"]["humidity"]}",
+                                    style=TextStyle(size=15, weight=FontWeight.W_500)
+                                )], spacing=5
+                            ),
+                            flet.Container(height=1, bgcolor=Colors.GREY)
+                        ], spacing=10), height=90, bgcolor=Colors.GREY_50)
+                    )
+
+                    print(entry_date, entry_time)
+
+                entries_counter_text.value = f"Обнаружено записей: {len(file_steam_reader["data"].keys())}"
+                entries_counter_text.visible = True
+
+                for container in data_containers:
+                    entries_list_view.controls.append(container)
+
+            page.update()
 
         entries_title = flet.Row(
             controls=[
                 flet.Text(value="Записи сбора данных", style=TextStyle(size=17, weight=FontWeight.W_500)),
-                entries_counter_container
             ],
             spacing=12
         )
@@ -45,9 +89,10 @@ class HistoryModule(SceneModule):
 
         date_time_text = flet.Text(value="Текущая дата: Не выбранная дата")
 
-        entries_list_view = flet.ListView(spacing=15, padding=20, width=500, height=150, controls=[
-            flet.Text(value=f"Content-{i}", bgcolor=Colors.GREY) for i in range(10)]
-        )
+        entries_list_view = flet.ListView(spacing=15, padding=10, width=500, height=200, controls=[])
+
+        entries_counter_text = flet.Text(value="Обнаружено записей: 0", visible=False, style=TextStyle(size=16, weight=FontWeight.W_500))
+
 
         warning_text_title = flet.Text(
             value="Warning!",
@@ -65,7 +110,7 @@ class HistoryModule(SceneModule):
                     warning_text_title,
                     warning_text_body,
                     flet.TextButton(text="Постановление Роспотребнадзора", icon=Icons.WARNING)
-                ],spacing=5)
+                ], spacing=5)
         )
 
         return flet.Container(
@@ -74,11 +119,11 @@ class HistoryModule(SceneModule):
             content=flet.Column(controls=[
                 flet.Column(controls=[
                     entries_title,
-                    flet.Row(controls=[date_time_text, data_choose_calendar], spacing=10),
-                    flet.TextButton(text="Выбрать дату", icon=Icons.CALENDAR_TODAY, on_click=lambda e: page.open(data_choose_calendar))
+                    flet.Row(controls=[date_time_text, data_choose_calendar], spacing=5),
+                    flet.TextButton(text="Выбрать дату", icon=Icons.CALENDAR_TODAY, on_click=lambda e: page.open(data_choose_calendar)),
                 ]),
+                entries_counter_text,
                 entries_list_view,
-
                 warning_container
             ], spacing=25)
         )

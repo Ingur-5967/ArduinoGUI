@@ -13,10 +13,14 @@ class SystemFileStorage:
         if not self.file.exists():
             raise FileNotFoundError("File {} not exists".format(f"{path}/{file_name}"))
 
-    def get_parsed_data(self, date: str) -> tuple[str, str, str]:
+    def get_parsed_data(self, date: str) -> tuple[str, str]:
         lines = self.file.read()
 
         if not lines.__contains__(date):
             raise FileException("Section with Date {} not exists".format(date))
 
-        return lines['data'][date]['time'], lines['data'][date]['temperature'], lines['data'][date]['humidity']
+        return lines['data'][date]['temperature'], lines['data'][date]['humidity']
+
+    def get_parsed_all_data(self) -> tuple[str, str, str]:
+        lines = self.file.read()
+        return lines['data'] or [{"data": {}}]
