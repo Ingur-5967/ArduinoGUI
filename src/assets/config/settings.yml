@@ -1,6 +1,6 @@
 # arduino
 cooldown_stream_reader: None
-selected_listen_com_port: None
+selected_listen_com_port: COM5
 
 # log
 log_directory_storage: None

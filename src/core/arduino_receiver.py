@@ -35,6 +35,7 @@ class ArduinoReceiver:
             raise ArduinoStreamReaderException("Connection failed")
 
         port = serial.Serial(self.arduino_port_listen.get_port_name(), rate)
+        port.timeout = 2
 
         receive_message = port.readline().decode("utf-8").strip()
 

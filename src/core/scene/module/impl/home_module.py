@@ -8,6 +8,7 @@ from flet.core.types import FontWeight
 
 from src.core.arduino_receiver import ArduinoReceiver
 from src.core.container.file_storage import FileNaming
+from src.core.exception.ArduinoStreamReaderException import ArduinoStreamReaderException
 from src.core.port_provider import PortService
 from src.core.scene.file_service import File
 from src.core.scene.module.scene_module import SceneModule
@@ -31,7 +32,7 @@ class HomeModule(SceneModule):
             try:
                 updated_received_data = ArduinoReceiver().read_stream_data()
                 temp_value, humidity_value = updated_received_data[0].get_value(), updated_received_data[1].get_value()
-            except:
+            except ArduinoStreamReaderException:
                 temp_value, humidity_value = "Failed to read received data", "Failed to read received data"
 
             temperature_text.value = f"Температура: {temp_value}"
