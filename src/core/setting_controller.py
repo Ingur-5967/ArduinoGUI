@@ -50,3 +50,11 @@ class SettingController:
 
     def get_config_file_path(self) -> str:
         return self.file
+
+    def set_parameter_and_save(self, section: str, new_value: str):
+        with open(self.get_config_file_path(), 'r') as file:
+            data = file.read()
+            data = data.replace(self.get_parameter_line_by_key(section),f"{section}: {new_value}")
+
+        with open(self.get_config_file_path(), 'w') as file:
+            file.write(data)

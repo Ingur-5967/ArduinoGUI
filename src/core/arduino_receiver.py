@@ -1,5 +1,6 @@
 import serial
 
+from src.core.exception.ArduinoStreamReaderException import ArduinoStreamReaderException
 from src.core.port_provider import PortService
 
 
@@ -29,13 +30,16 @@ class ArduinoReceiver:
         except:
             return False
 
-    def read_stream_data(self, rate=9600) -> list[None] | list[ArduinoData]:
+    def read_stream_data(self, rate=9600) -> list[ArduinoData]:
         if not self._check_connection():
-            return [None] * 2
+            raise ArduinoStreamReaderException("Connection failed")
 
         port = serial.Serial(self.arduino_port_listen.get_port_name(), rate)
 
         receive_message = port.readline().decode("utf-8").strip()
+
+        if len(receive_message) == 0 or receive_message.count(":") != 2:
+            raise ArduinoStreamReaderException("Message is empty or invalid format")
 
         received_message_parsed = receive_message.split(" ")
 

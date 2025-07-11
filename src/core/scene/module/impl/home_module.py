@@ -28,14 +28,14 @@ class HomeModule(SceneModule):
             refresh_button.disabled = True
             page.update()
 
-            updated_received_data = ArduinoReceiver().read_stream_data()
+            try:
+                updated_received_data = ArduinoReceiver().read_stream_data()
+                temp_value, humidity_value = updated_received_data[0].get_value(), updated_received_data[1].get_value()
+            except:
+                temp_value, humidity_value = "Failed to read received data", "Failed to read received data"
 
-            temperature_text.value = f"Температура: {
-                updated_received_data[0].get_value() if arduino_received_data[0] is not None else 'Runtime error'
-            }"
-            humidity_text.value = f"Влажность: {
-                updated_received_data[1].get_value() if arduino_received_data[0] is not None else 'Runtime error'
-            }"
+            temperature_text.value = f"Температура: {temp_value}"
+            humidity_text.value = f"Влажность: {humidity_value}"
 
             refresh_button.disabled = False
 
@@ -68,8 +68,8 @@ class HomeModule(SceneModule):
             data_file.write(lines)
 
         warning_text = flet.Text(
-            value="Невозможно открыть поток чтения данных, так как у вас не назначен прослушиваемый порт Arduino!\n\n"
-                  "Перейдите в настройки, чтобы изменить COM-порт"
+            value="Невозможно открыть поток чтения данных, так как прослушиваемый порт Arduino не определился автоматически!\n\n"
+                  "Возможно, у вас нет подключенных устройст или их больше одного\nПерейдите в настройки, чтобы принудительно изменить COM-порт"
 
         )
 
@@ -78,13 +78,23 @@ class HomeModule(SceneModule):
                             style=TextStyle(size=15, weight=FontWeight.W_400)
         )
 
-        arduino_received_data = ArduinoReceiver().read_stream_data()
+        temp_value = None
+        humidity_value = None
+        try:
+            arduino_received_data = ArduinoReceiver().read_stream_data()
+            temp_value, humidity_value = arduino_received_data[0].get_value(), arduino_received_data[1].get_value()
+        except:
+            temp_value, humidity_value = "Failed to read received data", "Failed to read received data"
+
 
         temperature_text = flet.Text(
-            value=f"Температура: {arduino_received_data[0].get_value() if not arduino_received_data.__contains__(None) else "{Runtime error}"}",
+            value=f"Температура: {temp_value}",
             style=TextStyle(size=17, weight=FontWeight.W_500)
         )
-        humidity_text = flet.Text(value=f"Влажность: {arduino_received_data[1].get_value() if not arduino_received_data.__contains__(None) else "{Runtime error}"}", style=TextStyle(size=17, weight=FontWeight.W_500))
+        humidity_text = flet.Text(
+            value=f"Влажность: {humidity_value}",
+            style=TextStyle(size=17, weight=FontWeight.W_500)
+        )
 
         refresh_button = flet.IconButton(icon=Icons.REFRESH, on_click=refresh_data_stream_reader)
 
