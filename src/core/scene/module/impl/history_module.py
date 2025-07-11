@@ -79,7 +79,10 @@ class HistoryModule(SceneModule):
                 else:
                     entries_counter_text.value = f"За выбранный период {e.control.value.strftime('%m/%d/%Y')} не найдено ни одной записи, полученной с Arduino"
                     entries_counter_text.visible = True
-                    container_content.controls.remove(entries_list_view)
+
+                    if container_content.controls.__contains__(entries_list_view):
+                        container_content.controls.remove(entries_list_view)
+
                     entries_list_view.controls.clear()
 
             page.update()

@@ -67,6 +67,8 @@ class SettingsModule(SceneModule):
 
             if len(PortService().get_arduino_ports()) == 0:
                 dropdown_selector.options = [flet.DropdownOption("<Нет активных портов>")]
+            else:
+                dropdown_selector.value = PortService().get_arduino_ports()[0].get_port_name()
 
             path_selector = flet.TextField(
                 value=(dialog_options[select_category_setting.value] if setting_controller.get_parameter_by_key(

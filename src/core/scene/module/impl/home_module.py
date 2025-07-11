@@ -38,7 +38,7 @@ class HomeModule(SceneModule):
             temperature_text.value = f"Температура: {temp_value}"
             humidity_text.value = f"Влажность: {humidity_value}"
 
-            save_entry_button.disabled = temp_value.__contains__("Failed") or not humidity_value.__contains__("Failed")
+            save_entry_button.disabled = temp_value.__contains__("Failed") or humidity_value.__contains__("Failed")
 
             refresh_button.disabled = False
 
@@ -72,7 +72,7 @@ class HomeModule(SceneModule):
 
         warning_text = flet.Text(
             value="Невозможно открыть поток чтения данных, так как прослушиваемый порт Arduino не определился автоматически!\n\n"
-                  "Возможно, у вас нет подключенных устройст или их больше одного\nПерейдите в настройки, чтобы принудительно изменить COM-порт"
+                  "Возможно, у вас нет подключенных устройств или их больше одного\nПерейдите в настройки, чтобы принудительно изменить COM-порт"
 
         )
 
@@ -104,7 +104,7 @@ class HomeModule(SceneModule):
             text="Сохранить запись",
             icon=Icons.SAVE,
             on_click=save_entry,
-            disabled=temp_value.__contains__("Failed") or not humidity_value.__contains__("Failed")
+            disabled=temp_value.__contains__("Failed") or humidity_value.__contains__("Failed")
         )
 
         reader_application_body = flet.Column(
@@ -128,11 +128,7 @@ class HomeModule(SceneModule):
                                 humidity_text
                             ]
                         ),
-                        flet.Row(
-                            controls=[
-                                save_entry_button
-                            ]
-                        )
+                        save_entry_button
                     ],
                     spacing=19
                 )
