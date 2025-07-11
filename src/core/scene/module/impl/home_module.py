@@ -38,6 +38,8 @@ class HomeModule(SceneModule):
             temperature_text.value = f"Температура: {temp_value}"
             humidity_text.value = f"Влажность: {humidity_value}"
 
+            save_entry_button.disabled = temp_value.__contains__("Failed") or not humidity_value.__contains__("Failed")
+
             refresh_button.disabled = False
 
             page.update()
@@ -75,8 +77,8 @@ class HomeModule(SceneModule):
         )
 
         data_stream_reader_title = flet.Text(
-                            value=f"Полученные данные за {datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S')}",
-                            style=TextStyle(size=15, weight=FontWeight.W_400)
+            value=f"Полученные данные за {datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S')}",
+            style=TextStyle(size=15, weight=FontWeight.W_400)
         )
 
         temp_value = None
@@ -86,7 +88,6 @@ class HomeModule(SceneModule):
             temp_value, humidity_value = arduino_received_data[0].get_value(), arduino_received_data[1].get_value()
         except:
             temp_value, humidity_value = "Failed to read received data", "Failed to read received data"
-
 
         temperature_text = flet.Text(
             value=f"Температура: {temp_value}",
@@ -98,6 +99,13 @@ class HomeModule(SceneModule):
         )
 
         refresh_button = flet.IconButton(icon=Icons.REFRESH, on_click=refresh_data_stream_reader)
+
+        save_entry_button = flet.TextButton(
+            text="Сохранить запись",
+            icon=Icons.SAVE,
+            on_click=save_entry,
+            disabled=temp_value.__contains__("Failed") or not humidity_value.__contains__("Failed")
+        )
 
         reader_application_body = flet.Column(
             controls=[
@@ -122,7 +130,7 @@ class HomeModule(SceneModule):
                         ),
                         flet.Row(
                             controls=[
-                                flet.TextButton(text="Сохранить запись", icon=Icons.SAVE, on_click=save_entry)
+                                save_entry_button
                             ]
                         )
                     ],

@@ -47,6 +47,8 @@ class SettingsModule(SceneModule):
                     dropdown_selector.value = ""
                     dropdown_selector.update()
 
+                print(e.control.value)
+
                 page.update()
 
             file_picker = flet.FilePicker(on_result=on_dir_selected)
@@ -96,13 +98,13 @@ class SettingsModule(SceneModule):
         dialog_options = {
             "Логи": "Директория для логов",
             "Данные": "Директория для данных",
-            "Arduino": "Промежуток обращения к Arduino (MIN)",
+            "Arduino": "Прослушиваемый COM-port",
         }
 
         setting_options = {
             "Логи": SettingConstSection.LOG_DIRECTORY_STORAGE,
             "Данные": SettingConstSection.DATA_DIRECTORY_STORAGE,
-            "Arduino": SettingConstSection.COOLDOWN_STREAM_READER,
+            "Arduino": SettingConstSection.SELECTED_LISTEN_COM_PORT,
             "Data types": SettingConstSection.DATA_VIEW_TYPE,
         }
 
