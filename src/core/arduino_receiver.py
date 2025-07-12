@@ -25,7 +25,9 @@ class ArduinoReceiver:
     def _check_connection(self, rate=9600) -> bool:
         if self.arduino_port_listen is None: return False
         try:
-            serial.Serial(self.arduino_port_listen.get_port_name(), rate)
+            testport = serial.Serial(baudrate=rate)
+            testport.setDTR(False)
+            testport.port = self.arduino_port_listen.get_port_name()
             return True
         except:
             return False
@@ -34,8 +36,11 @@ class ArduinoReceiver:
         if not self._check_connection():
             raise ArduinoStreamReaderException("Connection failed")
 
-        port = serial.Serial(self.arduino_port_listen.get_port_name(), rate)
+        port = serial.Serial(baudrate=rate)
         port.timeout = 2
+        port.setDTR(False)
+        port.port = self.arduino_port_listen.get_port_name()
+        port.open()
 
         receive_message = port.readline().decode("utf-8").strip()
 

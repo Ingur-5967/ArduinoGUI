@@ -30,6 +30,7 @@ class BoardModule(SceneModule):
             icon=Icons.QUERY_STATS,
             style=ButtonStyle(icon_size=25, text_style=TextStyle(size=17, weight=FontWeight.W_500)),
             width=150,
+            on_click=lambda e: scene.get_view_by_id("statistic_view").load(scene, page)
         )
 
         entries_button = flet.TextButton(

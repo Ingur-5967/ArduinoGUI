@@ -51,6 +51,13 @@ class SettingsModule(SceneModule):
 
                 page.update()
 
+            def open_saved_directory(e):
+
+                if len(path_selector.value) == 0 or not os.path.isdir(path_selector.value):
+                    return
+
+                os.startfile(path_selector.value)
+
             file_picker = flet.FilePicker(on_result=on_dir_selected)
             page.overlay.append(file_picker)
             page.update()
@@ -83,7 +90,11 @@ class SettingsModule(SceneModule):
                     flet.ElevatedButton(text="Выбрать папку", icon=Icons.EDIT,
                                         on_click=lambda _: file_picker.get_directory_path())
                 ]),
-                flet.TextButton(text="Сохранить изменения", on_click=save_changes)
+                flet.Row(controls=[
+                        flet.TextButton(text="Сохранить изменения", on_click=save_changes),
+                        flet.TextButton(text="Открыть папку", on_click=open_saved_directory)
+                    ]
+                )
             ]) \
                 if select_category_setting.value != "Arduino" else flet.Column(
                 controls=[
@@ -107,7 +118,6 @@ class SettingsModule(SceneModule):
             "Логи": SettingConstSection.LOG_DIRECTORY_STORAGE,
             "Данные": SettingConstSection.DATA_DIRECTORY_STORAGE,
             "Arduino": SettingConstSection.SELECTED_LISTEN_COM_PORT,
-            "Data types": SettingConstSection.DATA_VIEW_TYPE,
         }
 
         select_category_setting = flet.Dropdown(

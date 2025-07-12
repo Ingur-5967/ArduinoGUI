@@ -8,13 +8,14 @@ from src.core.scene.view.impl.history_view import HistoryView
 from src.core.scene.view.impl.main_view import HomeView
 from src.core.scene.view.impl.settings_view import SettingsView
 from src.core.scene.view.impl.start_view import StartView
+from src.core.scene.view.impl.statistic_view import StatisticView
 from src.core.setting_controller import SettingController, SettingConstSection
 
 
 class Application:
     def __init__(self, scene: Scene):
         self.scene = scene
-        self.scene.init_views(StartView(), HomeView(), SettingsView(), HistoryView())
+        self.scene.init_views(StartView(), HomeView(), SettingsView(), HistoryView(), StatisticView())
 
     def main(self, page: Page):
         page.title = "Метеостанция"

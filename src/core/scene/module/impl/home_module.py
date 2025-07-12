@@ -81,8 +81,6 @@ class HomeModule(SceneModule):
             style=TextStyle(size=15, weight=FontWeight.W_400)
         )
 
-        temp_value = None
-        humidity_value = None
         try:
             arduino_received_data = ArduinoReceiver().read_stream_data()
             temp_value, humidity_value = arduino_received_data[0].get_value(), arduino_received_data[1].get_value()

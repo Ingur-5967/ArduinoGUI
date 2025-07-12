@@ -37,8 +37,6 @@ class HistoryModule(SceneModule):
 
                 file_steam_reader = data_file.read()
 
-
-
                 for index, entry in enumerate(file_steam_reader["data"].keys()):
 
                     entry_date = entry.split(" ")[0]
@@ -76,12 +74,16 @@ class HistoryModule(SceneModule):
                         entries_list_view.controls.append(container)
 
                     container_content.controls.append(entries_list_view)
+                    container_content.controls.append(import_xlsx_button)
                 else:
                     entries_counter_text.value = f"За выбранный период {e.control.value.strftime('%m/%d/%Y')} не найдено ни одной записи, полученной с Arduino"
                     entries_counter_text.visible = True
 
                     if container_content.controls.__contains__(entries_list_view):
                         container_content.controls.remove(entries_list_view)
+
+                    if container_content.controls.__contains__(import_xlsx_button):
+                        container_content.controls.remove(import_xlsx_button)
 
                     entries_list_view.controls.clear()
 
@@ -106,25 +108,7 @@ class HistoryModule(SceneModule):
 
         entries_counter_text = flet.Text(visible=False, style=TextStyle(size=16, weight=FontWeight.W_500))
 
-
-        warning_text_title = flet.Text(
-            value="Warning!",
-            color=Colors.RED,
-            style=TextStyle(size=15, weight=FontWeight.W_700)
-        )
-        warning_text_body = flet.Text(
-            value="Обнаружена аномально высокая температура (33) в течении N минут\nСоветуем переместиться ближе к водоемам",
-            color=Colors.BLACK, style=TextStyle(size=13, weight=FontWeight.W_400)
-        )
-
-        warning_container = flet.Container(
-            content=flet.Column(
-                controls=[
-                    warning_text_title,
-                    warning_text_body,
-                    flet.TextButton(text="Постановление Роспотребнадзора", icon=Icons.WARNING)
-                ], spacing=5)
-        )
+        import_xlsx_button = flet.TextButton(text="Импортировать в xlsx", icon=Icons.TABLE_VIEW)
 
         container_content = flet.Column(controls=[
                 flet.Column(controls=[
