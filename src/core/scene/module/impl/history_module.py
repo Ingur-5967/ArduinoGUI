@@ -1,6 +1,7 @@
 import datetime
 
 import flet
+import pandas
 from flet.core.colors import Colors
 from flet.core.icons import Icons
 from flet.core.text_style import TextStyle
@@ -20,6 +21,8 @@ class HistoryModule(SceneModule):
 
     def init(self, page: flet.Page, scene: Scene) -> flet.Control:
         setting_controller = SettingController()
+        parsed_data = []
+
         def handle_change(e):
             date_time_text.value = f"Текущая дата: {e.control.value.strftime('%m/%d/%Y')}"
 
@@ -43,6 +46,13 @@ class HistoryModule(SceneModule):
                     entry_time = entry.split(" ")[1]
 
                     if entry_date != e.control.value.strftime('%m/%d/%Y'): continue
+
+                    parsed_data.append((
+                        entry_date,
+                        entry_time,
+                        file_steam_reader["data"][f"{entry_date} {entry_time}"]["temperature"],
+                        file_steam_reader["data"][f"{entry_date} {entry_time}"]["humidity"]
+                    ))
 
                     data_containers.append(
                         flet.Container(
@@ -89,6 +99,10 @@ class HistoryModule(SceneModule):
 
             page.update()
 
+        def import_to_xlsx(e):
+            xlsx_frame = pandas.DataFrame(parsed_data, columns=["Дата (мм.дд.гг)", "Время", "Температура (℃)", "Влажность (%)"])
+            xlsx_frame.to_excel(f"{setting_controller.get_parameter_by_key(SettingConstSection.DATA_DIRECTORY_STORAGE).get_value_section()}\\entries_table.xlsx", index=False, engine="openpyxl")
+
         entries_title = flet.Row(
             controls=[
                 flet.Text(value="Записи сбора данных", style=TextStyle(size=17, weight=FontWeight.W_500)),
@@ -108,7 +122,7 @@ class HistoryModule(SceneModule):
 
         entries_counter_text = flet.Text(visible=False, style=TextStyle(size=16, weight=FontWeight.W_500))
 
-        import_xlsx_button = flet.TextButton(text="Импортировать в xlsx", icon=Icons.TABLE_VIEW)
+        import_xlsx_button = flet.TextButton(text="Импортировать в xlsx", icon=Icons.TABLE_VIEW, on_click=import_to_xlsx)
 
         container_content = flet.Column(controls=[
                 flet.Column(controls=[
