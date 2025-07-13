@@ -31,7 +31,6 @@ class HistoryModule(SceneModule):
             if data_directory_path is None:
                 pass
             else:
-
                 data_file = File(data_directory_path.get_value_section(), FileNaming.DATA_FILE_NAME)
 
                 if len(data_file.read()) == 0: pass
@@ -122,7 +121,7 @@ class HistoryModule(SceneModule):
 
         entries_counter_text = flet.Text(visible=False, style=TextStyle(size=16, weight=FontWeight.W_500))
 
-        import_xlsx_button = flet.TextButton(text="Импортировать в xlsx", icon=Icons.TABLE_VIEW, on_click=import_to_xlsx)
+        import_xlsx_button = flet.TextButton(text="Экспортировать в xlsx", icon=Icons.TABLE_VIEW, on_click=import_to_xlsx)
 
         container_content = flet.Column(controls=[
                 flet.Column(controls=[
