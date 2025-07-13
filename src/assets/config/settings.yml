@@ -3,7 +3,7 @@ cooldown_stream_reader: None
 selected_listen_com_port: None
 
 # log
-log_directory_storage: None
+log_directory_storage: C:\Users\slava\Downloads\Phone Link
 data_directory_storage: C:\Users\slava\Downloads\Phone Link
 
 # dota type
