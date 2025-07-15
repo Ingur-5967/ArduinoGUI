@@ -15,6 +15,7 @@ from src.core.scene.file_service import File
 from src.core.scene.module.scene_module import SceneModule
 from src.core.scene.scene import Scene
 from src.core.setting_controller import SettingController, SettingConstSection
+from src.core.tool.graph_tool import GraphTool
 
 
 class StatisticModule(SceneModule):
@@ -24,6 +25,7 @@ class StatisticModule(SceneModule):
 
     def init(self, page: flet.Page, scene: Scene) -> flet.Control:
         setting_controller = SettingController()
+
         def handle_change(e):
 
             date_time_text.value = f"Текущая дата: {e.control.value.strftime('%m/%d/%Y')}"
@@ -58,9 +60,9 @@ class StatisticModule(SceneModule):
                         "humidity": file_steam_reader["data"][f'{entry_date} {entry_time}']['humidity'],
                     }
 
-                parsed_temperature_values = [int(data_container[section]['temperature']) for section in data_container.keys()]
-
-                fig, ax = plt.subplots(figsize=(7, 4))
+                parsed_temperature_values = [int(data_container[section]['temperature']) for section in
+                                             data_container.keys()]
+                parsed_humidity_values = [int(data_container[section]['humidity']) for section in data_container.keys()]
 
                 start = pd.to_datetime(start_date_time_chart)
                 end = pd.to_datetime(end_date_time_chart)
@@ -68,19 +70,19 @@ class StatisticModule(SceneModule):
                 if end <= start:
                     end += pd.Timedelta(days=1)
 
-                plt.plot(list(data_container.keys()), parsed_temperature_values, linestyle='solid')
+                graph_temperature_element = GraphTool(list(data_container.keys()),
+                                                      parsed_temperature_values).build_graph(
+                    "График изменения температуры", "Время замеров", "Температура (°C)", start, end, (7, 4))
+                graph_humidity_element = GraphTool(list(data_container.keys()), parsed_humidity_values).build_graph(
+                    "График изменения влажности", "Время замеров", "Влажность (%)", start, end, (7, 4))
 
-                ax.set_xlabel("Время замеров")
-                ax.set_ylabel("Температура")
-                ax.set_title("График изменения температуры")
+                if len(entries_list_view.controls) > 0:
+                    entries_list_view.controls.clear()
+                    container_content.controls.remove(entries_list_view)
 
-                ax.grid(True)
-
-                plt.xticks(rotation=45)
-
-                fig.tight_layout()
-
-                container_content.controls.append(MatplotlibChart(fig, expand=True))
+                entries_list_view.controls.append(graph_temperature_element)
+                entries_list_view.controls.append(graph_humidity_element)
+                container_content.controls.append(entries_list_view)
 
             page.update()
 
@@ -96,6 +98,8 @@ class StatisticModule(SceneModule):
             last_date=datetime.datetime(year=2025, month=10, day=1),
             on_change=handle_change,
         )
+
+        entries_list_view = flet.ListView(spacing=15, padding=10, width=500, height=300, controls=[])
 
         date_time_text = flet.Text(value="Текущая дата: Не выбранная дата")
 

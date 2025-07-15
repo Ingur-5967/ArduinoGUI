@@ -1,9 +1,9 @@
 # arduino
-cooldown_stream_reader: None
+cooldown_stream_reader: 1
 selected_listen_com_port: None
 
 # log
-log_directory_storage: C:\Users\slava\Downloads\Phone Link
+log_directory_storage: C:\Users\slava\3D Objects
 data_directory_storage: C:\Users\slava\Downloads\Phone Link
 
 # dota type

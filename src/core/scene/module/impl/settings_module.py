@@ -23,23 +23,34 @@ class SettingsModule(SceneModule):
 
             def on_dir_selected(e: flet.FilePickerResultEvent):
                 if e.path:
-                    path_selector.value = f"{e.path}"
+                    uneditable_text_field.value = f"{e.path}"
 
                 page.update()
 
             def save_changes(e):
                 section = setting_options[select_category_setting.value]
 
-                if not os.path.isdir(path_selector.value):
-                    pass
-                else:
+                if select_category_setting.value == "Arduino":
+                    if not editable_text_field.value.isdigit() or not dropdown_selector.value.startswith("COM"): return
                     with open(setting_controller.get_config_file_path(), 'r') as file:
                         data = file.read()
-                        data = data.replace(setting_controller.get_parameter_line_by_key(section),
-                                            f"{section}: {path_selector.value}")
+                        data = data.replace(
+                            setting_controller.get_parameter_line_by_key(section[0]),f"{section[0]}: {dropdown_selector.value}"
+                        ).replace(
+                            setting_controller.get_parameter_line_by_key(section[1]),f"{section[1]}: {editable_text_field.value}"
+                        )
 
-                    with open(setting_controller.get_config_file_path(), 'w') as file:
-                        file.write(data)
+                else:
+                    if not os.path.isdir(uneditable_text_field.value):
+                        pass
+                    else:
+                        with open(setting_controller.get_config_file_path(), 'r') as file:
+                            data = file.read()
+                            data = data.replace(setting_controller.get_parameter_line_by_key(section),
+                                                f"{section}: {uneditable_text_field.value}")
+
+                with open(setting_controller.get_config_file_path(), 'w') as file:
+                    file.write(data)
 
             def com_port_select(e):
                 if dropdown_selector.value.startswith("<") and dropdown_selector.value.endswith(">"):
@@ -53,10 +64,10 @@ class SettingsModule(SceneModule):
 
             def open_saved_directory(e):
 
-                if len(path_selector.value) == 0 or not os.path.isdir(path_selector.value):
+                if len(uneditable_text_field.value) == 0 or not os.path.isdir(uneditable_text_field.value):
                     return
 
-                os.startfile(path_selector.value)
+                os.startfile(uneditable_text_field.value)
 
             file_picker = flet.FilePicker(on_result=on_dir_selected)
             page.overlay.append(file_picker)
@@ -77,16 +88,18 @@ class SettingsModule(SceneModule):
             else:
                 dropdown_selector.value = PortService().get_arduino_ports()[0].get_port_name()
 
-            path_selector = flet.TextField(
-                value=(dialog_options[select_category_setting.value] if setting_controller.get_parameter_by_key(
-                    setting_options[
-                        select_category_setting.value]).get_value_section() == "None" else setting_controller.get_parameter_by_key(
-                    setting_options[select_category_setting.value]).get_value_section()),
+            uneditable_text_field = flet.TextField(
+                value="",
                 read_only=True
             )
+
+            editable_text_field = flet.TextField(
+                value="",
+            )
+
             field_category_container.content = flet.Column(controls=[
                 flet.Row(controls=[
-                    path_selector,
+                    uneditable_text_field,
                     flet.ElevatedButton(text="Выбрать папку", icon=Icons.EDIT,
                                         on_click=lambda _: file_picker.get_directory_path())
                 ]),
@@ -99,6 +112,7 @@ class SettingsModule(SceneModule):
                 if select_category_setting.value != "Arduino" else flet.Column(
                 controls=[
                     dropdown_selector,
+                    editable_text_field,
                     flet.TextButton(text="Сохранить изменения", on_click=save_changes)
                 ],
 
@@ -108,16 +122,10 @@ class SettingsModule(SceneModule):
 
         page.clean()
 
-        dialog_options = {
-            "Логи": "Директория для логов",
-            "Данные": "Директория для данных",
-            "Arduino": "Прослушиваемый COM-port",
-        }
-
         setting_options = {
             "Логи": SettingConstSection.LOG_DIRECTORY_STORAGE,
             "Данные": SettingConstSection.DATA_DIRECTORY_STORAGE,
-            "Arduino": SettingConstSection.SELECTED_LISTEN_COM_PORT,
+            "Arduino": [SettingConstSection.SELECTED_LISTEN_COM_PORT, SettingConstSection.COOLDOWN_STREAM_READER],
         }
 
         select_category_setting = flet.Dropdown(
