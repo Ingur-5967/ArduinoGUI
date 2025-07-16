@@ -9,6 +9,7 @@ class SceneStorage:
 
     def __init__(self):
         self.scenes = list[SceneModule]()
+        self
 
     def put_module(self, module: SceneModule) -> None:
         self.scenes.append(module)

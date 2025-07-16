@@ -28,6 +28,7 @@ class ArduinoReceiver:
             testport = serial.Serial(baudrate=rate)
             testport.setDTR(False)
             testport.port = self.arduino_port_listen.get_port_name()
+            testport.open()
             return True
         except:
             return False

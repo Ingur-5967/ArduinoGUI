@@ -4,6 +4,7 @@ import flet
 from flet.core.page import Page
 
 from src.core.arduino_receiver import ArduinoReceiver
+from src.core.exception.ArduinoStreamReaderException import ArduinoStreamReaderException
 from src.core.port_provider import PortService
 from src.core.scene.scene import Scene
 from src.core.scene.scene_service import load_view
@@ -49,16 +50,18 @@ class Application:
                 cooldown = SettingController().get_parameter_by_key(SettingConstSection.COOLDOWN_STREAM_READER).get_value_section()
                 active_port = SettingController().get_parameter_by_key(SettingConstSection.SELECTED_LISTEN_COM_PORT).get_value_section()
 
-                if cooldown is None or active_port is None: continue
-                if len(port_controller.get_arduino_ports()) == 0: continue
+                if (cooldown is None or active_port is None) or len(port_controller.get_arduino_ports()) == 0:
+                    await asyncio.sleep(1)
+                else:
+                    print(cooldown)
+                    try:
+                        forced_received_arduino_data = ArduinoReceiver().read_stream_data()
+                    except ArduinoStreamReaderException:
+                        await asyncio.sleep(float(cooldown))
 
-                forced_received_arduino_data = ArduinoReceiver().read_stream_data()
+                    print([data.get_value() for data in forced_received_arduino_data])
 
-                print(forced_received_arduino_data)
-
-                await asyncio.sleep(float(cooldown))
-
-
+                    await asyncio.sleep(float(cooldown))
 
     def get_scene_instance(self):
         return self.scene
