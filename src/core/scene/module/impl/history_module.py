@@ -60,14 +60,14 @@ class HistoryModule(SceneModule):
                             flet.Row(controls=[
                                 flet.Icon(name=Icons.SEVERE_COLD),
                                 flet.Text(
-                                    value=f"Температура: {file_steam_reader["data"][f"{entry_date} {entry_time}"]["temperature"]}",
+                                    value=f"Температура: {file_steam_reader["data"][f"{entry_date} {entry_time}"]["temperature"]}℃",
                                     style=TextStyle(size=15, weight=FontWeight.W_500)
                                 )], spacing=5
                             ),
                             flet.Row(controls=[
                                 flet.Icon(name=Icons.CLOUD),
                                 flet.Text(
-                                    value=f"Влажность: {file_steam_reader["data"][f"{entry_date} {entry_time}"]["humidity"]}",
+                                    value=f"Влажность: {file_steam_reader["data"][f"{entry_date} {entry_time}"]["humidity"]}%",
                                     style=TextStyle(size=15, weight=FontWeight.W_500)
                                 )], spacing=5
                             ),

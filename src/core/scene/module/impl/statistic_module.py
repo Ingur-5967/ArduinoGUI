@@ -60,9 +60,9 @@ class StatisticModule(SceneModule):
                         "humidity": file_steam_reader["data"][f'{entry_date} {entry_time}']['humidity'],
                     }
 
-                parsed_temperature_values = [int(data_container[section]['temperature']) for section in
+                parsed_temperature_values = [float(data_container[section]['temperature']) for section in
                                              data_container.keys()]
-                parsed_humidity_values = [int(data_container[section]['humidity']) for section in data_container.keys()]
+                parsed_humidity_values = [float(data_container[section]['humidity']) for section in data_container.keys()]
 
                 start = pd.to_datetime(start_date_time_chart)
                 end = pd.to_datetime(end_date_time_chart)

@@ -1,11 +1,14 @@
 import asyncio
+import datetime
 
 import flet
 from flet.core.page import Page
 
 from src.core.arduino_receiver import ArduinoReceiver
+from src.core.container.file_storage import FileNaming
 from src.core.exception.ArduinoStreamReaderException import ArduinoStreamReaderException
 from src.core.port_provider import PortService
+from src.core.scene.file_service import File
 from src.core.scene.scene import Scene
 from src.core.scene.scene_service import load_view
 from src.core.scene.view.impl.history_view import HistoryView
@@ -53,13 +56,23 @@ class Application:
                 if (cooldown is None or active_port is None) or len(port_controller.get_arduino_ports()) == 0 or not arduino_receiver._check_connection():
                     await asyncio.sleep(1)
                 else:
-                    print(cooldown)
                     try:
                         forced_received_arduino_data = ArduinoReceiver().read_stream_data()
                     except ArduinoStreamReaderException:
                         await asyncio.sleep(float(cooldown))
+                        continue
 
-                    print([data.get_value() for data in forced_received_arduino_data])
+                    file_stream_writer = File(setting_controller.get_parameter_by_key(SettingConstSection.DATA_DIRECTORY_STORAGE).get_value_section(), FileNaming.DATA_FILE_NAME)
+                    file_lines = file_stream_writer.read()
+                    received_temperature = forced_received_arduino_data[0].get_value()
+                    received_humidity = forced_received_arduino_data[1].get_value()
+                    timing = datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S')
+                    file_lines['data'][f'{timing.split(" ")[0]} {timing.split(" ")[1]}'] = {
+                        'temperature': received_temperature if received_temperature[-1].isdigit() else received_temperature[0:len(received_temperature) - 2],
+                        'humidity': received_humidity if received_humidity[-1].isdigit() else received_humidity[0:len(received_humidity) - 1]
+                    }
+
+                    file_stream_writer.write(file_lines)
 
                     await asyncio.sleep(float(cooldown))
 

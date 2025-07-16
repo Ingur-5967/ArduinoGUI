@@ -48,9 +48,12 @@ class SettingsModule(SceneModule):
                             data = file.read()
                             data = data.replace(setting_controller.get_parameter_line_by_key(section),
                                                 f"{section}: {uneditable_text_field.value}")
+                            print(data)
 
                 with open(setting_controller.get_config_file_path(), 'w') as file:
                     file.write(data)
+                    file.flush()
+
 
             def com_port_select(e):
                 if dropdown_selector.value.startswith("<") and dropdown_selector.value.endswith(">"):
@@ -83,19 +86,31 @@ class SettingsModule(SceneModule):
                 on_change=com_port_select
             )
 
+
             if len(PortService().get_arduino_ports()) == 0:
                 dropdown_selector.options = [flet.DropdownOption("<Нет активных портов>")]
             else:
                 dropdown_selector.value = PortService().get_arduino_ports()[0].get_port_name()
 
+
+            editable_text_field = flet.TextField()
             uneditable_text_field = flet.TextField(
-                value="",
                 read_only=True
             )
 
-            editable_text_field = flet.TextField(
-                value="",
-            )
+            if select_category_setting.value == "Arduino":
+                insert_field_value_dropdown = setting_controller.get_parameter_by_key(setting_options[select_category_setting.value][0])
+                insert_field_value_field = setting_controller.get_parameter_by_key(setting_options[select_category_setting.value][1])
+
+                editable_text_field.value = insert_field_value_field.get_value_section() if insert_field_value_field.get_value_section() != "None" else ""
+                dropdown_selector.value = insert_field_value_dropdown.get_value_section() if insert_field_value_dropdown.get_value_section() != "None" else ""
+            else:
+                insert_field_value = setting_controller.get_parameter_by_key(
+                    setting_options[select_category_setting.value])
+                uneditable_text_field = flet.TextField(
+                    value=(insert_field_value.get_value_section() if insert_field_value.get_value_section() != "None" else "123"),
+                    read_only=True
+                )
 
             field_category_container.content = flet.Column(controls=[
                 flet.Row(controls=[
