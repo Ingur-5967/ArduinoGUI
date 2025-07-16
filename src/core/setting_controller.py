@@ -20,6 +20,8 @@ class SettingConstSection:
 
     DATA_VIEW_TYPE="data_view_type"
 
+    WORK_TIME="work_time"
+
 class SettingController:
 
     def __init__(self, file='assets/config/settings.yml'):

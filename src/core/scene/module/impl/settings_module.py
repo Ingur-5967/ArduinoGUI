@@ -127,7 +127,13 @@ class SettingsModule(SceneModule):
                 if select_category_setting.value != "Arduino" else flet.Column(
                 controls=[
                     dropdown_selector,
-                    editable_text_field,
+                    flet.Column(controls=[
+                        editable_text_field,
+                        flet.Text(
+                            value="Примечание: Значение конвертируются в минуты",
+                            style=TextStyle(size=13)
+                        )
+                    ]),
                     flet.TextButton(text="Сохранить изменения", on_click=save_changes)
                 ],
 
@@ -141,12 +147,13 @@ class SettingsModule(SceneModule):
             "Логи": SettingConstSection.LOG_DIRECTORY_STORAGE,
             "Данные": SettingConstSection.DATA_DIRECTORY_STORAGE,
             "Arduino": [SettingConstSection.SELECTED_LISTEN_COM_PORT, SettingConstSection.COOLDOWN_STREAM_READER],
+            "Остальное": SettingConstSection.WORK_TIME
         }
 
         select_category_setting = flet.Dropdown(
             value="Выберите категорию",
             options=[flet.DropdownOption(key) for key, value in setting_options.items()],
-            width=130,
+            width=150,
             on_change=select_category
         )
 

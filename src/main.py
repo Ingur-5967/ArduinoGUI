@@ -59,7 +59,6 @@ class Application:
                     try:
                         forced_received_arduino_data = ArduinoReceiver().read_stream_data()
                     except ArduinoStreamReaderException:
-                        await asyncio.sleep(float(cooldown))
                         continue
 
                     file_stream_writer = File(setting_controller.get_parameter_by_key(SettingConstSection.DATA_DIRECTORY_STORAGE).get_value_section(), FileNaming.DATA_FILE_NAME)
@@ -74,7 +73,7 @@ class Application:
 
                     file_stream_writer.write(file_lines)
 
-                    await asyncio.sleep(float(cooldown))
+                    await asyncio.sleep(float(cooldown) * 60)
 
     def get_scene_instance(self):
         return self.scene
