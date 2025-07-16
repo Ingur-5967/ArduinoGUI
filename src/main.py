@@ -49,8 +49,8 @@ class Application:
             while True:
                 cooldown = SettingController().get_parameter_by_key(SettingConstSection.COOLDOWN_STREAM_READER).get_value_section()
                 active_port = SettingController().get_parameter_by_key(SettingConstSection.SELECTED_LISTEN_COM_PORT).get_value_section()
-
-                if (cooldown is None or active_port is None) or len(port_controller.get_arduino_ports()) == 0:
+                arduino_receiver = ArduinoReceiver()
+                if (cooldown is None or active_port is None) or len(port_controller.get_arduino_ports()) == 0 or not arduino_receiver._check_connection():
                     await asyncio.sleep(1)
                 else:
                     print(cooldown)
