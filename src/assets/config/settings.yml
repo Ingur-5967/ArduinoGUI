@@ -1,6 +1,6 @@
 # arduino
 cooldown_stream_reader: 5
-selected_listen_com_port: COM5
+selected_listen_com_port: None
 
 # log
 log_directory_storage: C:\Users\slava\3D Objects

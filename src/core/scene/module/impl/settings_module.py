@@ -99,12 +99,13 @@ class SettingsModule(SceneModule):
             )
 
             if select_category_setting.value == "Arduino":
+                print(123)
                 insert_field_value_dropdown = setting_controller.get_parameter_by_key(setting_options[select_category_setting.value][0])
                 insert_field_value_field = setting_controller.get_parameter_by_key(setting_options[select_category_setting.value][1])
 
                 editable_text_field.value = insert_field_value_field.get_value_section() if insert_field_value_field.get_value_section() != "None" else ""
                 dropdown_selector.value = insert_field_value_dropdown.get_value_section() if insert_field_value_dropdown.get_value_section() != "None" else ""
-            else:
+            elif select_category_setting != "Остальное":
                 insert_field_value = setting_controller.get_parameter_by_key(
                     setting_options[select_category_setting.value])
                 uneditable_text_field = flet.TextField(
@@ -117,6 +118,7 @@ class SettingsModule(SceneModule):
                     uneditable_text_field,
                     flet.ElevatedButton(text="Выбрать папку", icon=Icons.EDIT,
                                         on_click=lambda _: file_picker.get_directory_path())
+
                 ]),
                 flet.Row(controls=[
                         flet.TextButton(text="Сохранить изменения", on_click=save_changes),
@@ -135,8 +137,19 @@ class SettingsModule(SceneModule):
                         )
                     ]),
                     flet.TextButton(text="Сохранить изменения", on_click=save_changes)
-                ],
-
+                ]
+            ) if select_category_setting.value != "Остальное" else flet.Column(
+                controls=[
+                    dropdown_selector,
+                    flet.Column(controls=[
+                        editable_text_field,
+                        flet.Text(
+                            value="Формат ввода: 7:11-19:00 (Начало-Конец)",
+                            style=TextStyle(size=13)
+                        )
+                    ]),
+                    flet.TextButton(text="Сохранить изменения", on_click=save_changes)
+                ]
             )
 
             page.update()

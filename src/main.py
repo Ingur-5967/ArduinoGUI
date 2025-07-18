@@ -71,6 +71,8 @@ class Application:
                         'humidity': received_humidity if received_humidity[-1].isdigit() else received_humidity[0:len(received_humidity) - 1]
                     }
 
+                    if float(received_temperature) > 30: print("warning")
+
                     file_stream_writer.write(file_lines)
 
                     await asyncio.sleep(float(cooldown) * 60)
