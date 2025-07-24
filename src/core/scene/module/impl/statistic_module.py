@@ -1,12 +1,8 @@
 import datetime
-import random
 
 import flet
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
 import pandas as pd
 from flet.core.icons import Icons
-from flet.core.matplotlib_chart import MatplotlibChart
 from flet.core.text_style import TextStyle
 from flet.core.types import FontWeight
 

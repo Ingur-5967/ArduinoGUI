@@ -3,13 +3,12 @@ import flet
 from src.core.exception.ModuleException import ModuleException
 from src.core.scene.module.scene_module import SceneModule
 from src.core.scene.scene import Scene
-from src.core.scene.view.view import View
+
 
 class SceneStorage:
 
     def __init__(self):
         self.scenes = list[SceneModule]()
-        self
 
     def put_module(self, module: SceneModule) -> None:
         self.scenes.append(module)
