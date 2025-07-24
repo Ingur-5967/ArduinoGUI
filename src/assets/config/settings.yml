@@ -1,11 +1,19 @@
 # arduino
 cooldown_stream_reader: 5
+<<<<<<< HEAD
 selected_listen_com_port: COM6
 
 # log
 log_directory_storage: D:\arduino_projects\main_dht11\stuff
 data_directory_storage: D:\arduino_projects\main_dht11\stuff
 audio_directory_storage: None
+=======
+selected_listen_com_port: None
+
+# log
+log_directory_storage: C:\Users\slava\3D Objects
+data_directory_storage: C:\Users\Slava\Documents
+>>>>>>> 7ab033462ac10b281c8cd3e6c998dfe93ec76dd7
 
 # dota type
 data_view_type: C|percent

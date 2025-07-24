@@ -1,5 +1,8 @@
 import asyncio
 import datetime
+import datetime
+from ctypes import *
+import datetime
 from ctypes import *
 
 import flet
@@ -9,6 +12,7 @@ from src.core.arduino_receiver import ArduinoReceiver
 from src.core.container.file_storage import FileNaming
 from src.core.exception.ArduinoStreamReaderException import ArduinoStreamReaderException
 from src.core.port_provider import PortService
+from src.core.scene.file_service import File
 from src.core.scene.file_service import File
 from src.core.scene.scene import Scene
 from src.core.scene.scene_service import load_view
@@ -84,6 +88,7 @@ class Application:
                 if (cooldown is None or active_port is None) or len(port_controller.get_arduino_ports()) == 0 or not arduino_receiver._check_connection():
                     await asyncio.sleep(1)
                 else:
+                    print(cooldown)
                     try:
                         forced_received_arduino_data = ArduinoReceiver().read_stream_data()
                     except ArduinoStreamReaderException:
@@ -101,6 +106,8 @@ class Application:
 
                     file_stream_writer.write(file_lines)
 
+
+                    await asyncio.sleep(float(cooldown) * 60)
                     if not self.ignore_notification and int(received_temperature[:2]) >= 30:
                         self.audio_player.play_alarm("assets/doop.wav")
                         banner.content = flet.Text(

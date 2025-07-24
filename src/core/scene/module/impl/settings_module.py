@@ -53,6 +53,10 @@ class SettingsModule(SceneModule):
                 with open(setting_controller.get_config_file_path(), 'w') as file:
                     file.write(data)
                     file.flush()
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7ab033462ac10b281c8cd3e6c998dfe93ec76dd7
 
             def com_port_select(e):
                 if dropdown_selector.value.startswith("<") and dropdown_selector.value.endswith(">"):
@@ -85,37 +89,54 @@ class SettingsModule(SceneModule):
                 on_change=com_port_select
             )
 
+
             if len(PortService().get_arduino_ports()) == 0:
                 dropdown_selector.options = [flet.DropdownOption("<Нет активных портов>")]
             else:
                 dropdown_selector.value = PortService().get_arduino_ports()[0].get_port_name()
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7ab033462ac10b281c8cd3e6c998dfe93ec76dd7
             editable_text_field = flet.TextField()
             uneditable_text_field = flet.TextField(
                 read_only=True
             )
 
             if select_category_setting.value == "Arduino":
+<<<<<<< HEAD
+=======
+                print(123)
+>>>>>>> 7ab033462ac10b281c8cd3e6c998dfe93ec76dd7
                 insert_field_value_dropdown = setting_controller.get_parameter_by_key(setting_options[select_category_setting.value][0])
                 insert_field_value_field = setting_controller.get_parameter_by_key(setting_options[select_category_setting.value][1])
 
                 editable_text_field.value = insert_field_value_field.get_value_section() if insert_field_value_field.get_value_section() != "None" else ""
                 dropdown_selector.value = insert_field_value_dropdown.get_value_section() if insert_field_value_dropdown.get_value_section() != "None" else ""
+<<<<<<< HEAD
             elif select_category_setting.value != "Другое":
+=======
+            elif select_category_setting != "Остальное":
+>>>>>>> 7ab033462ac10b281c8cd3e6c998dfe93ec76dd7
                 insert_field_value = setting_controller.get_parameter_by_key(
                     setting_options[select_category_setting.value])
                 uneditable_text_field = flet.TextField(
                     value=(insert_field_value.get_value_section() if insert_field_value.get_value_section() != "None" else "123"),
                     read_only=True
                 )
+<<<<<<< HEAD
             else:
                 uneditable_text_field.value="assets/doop.wav"
+=======
+>>>>>>> 7ab033462ac10b281c8cd3e6c998dfe93ec76dd7
 
             field_category_container.content = flet.Column(controls=[
                 flet.Row(controls=[
                     uneditable_text_field,
                     flet.ElevatedButton(text="Выбрать папку", icon=Icons.EDIT,
                                         on_click=lambda _: file_picker.get_directory_path())
+
                 ]),
                 flet.Row(controls=[
                         flet.TextButton(text="Сохранить изменения", on_click=save_changes),
@@ -135,6 +156,7 @@ class SettingsModule(SceneModule):
                     ]),
                     flet.TextButton(text="Сохранить изменения", on_click=save_changes)
                 ]
+<<<<<<< HEAD
             )\
                 if select_category_setting.value != "Другое" else flet.Column(
                 controls=[
@@ -155,6 +177,19 @@ class SettingsModule(SceneModule):
                         flet.TextButton(text="Сохранить изменения", on_click=save_changes),
                         flet.TextButton(text="Открыть папку", on_click=open_saved_directory)
                     ])
+=======
+            ) if select_category_setting.value != "Остальное" else flet.Column(
+                controls=[
+                    dropdown_selector,
+                    flet.Column(controls=[
+                        editable_text_field,
+                        flet.Text(
+                            value="Формат ввода: 7:11-19:00 (Начало-Конец)",
+                            style=TextStyle(size=13)
+                        )
+                    ]),
+                    flet.TextButton(text="Сохранить изменения", on_click=save_changes)
+>>>>>>> 7ab033462ac10b281c8cd3e6c998dfe93ec76dd7
                 ]
             )
 
@@ -166,7 +201,11 @@ class SettingsModule(SceneModule):
             "Логи": SettingConstSection.LOG_DIRECTORY_STORAGE,
             "Данные": SettingConstSection.DATA_DIRECTORY_STORAGE,
             "Arduino": [SettingConstSection.SELECTED_LISTEN_COM_PORT, SettingConstSection.COOLDOWN_STREAM_READER],
+<<<<<<< HEAD
             "Другое": [SettingConstSection.WORK_TIME, SettingConstSection.AUDIO_DIRECTORY_STORAGE]
+=======
+            "Остальное": SettingConstSection.WORK_TIME
+>>>>>>> 7ab033462ac10b281c8cd3e6c998dfe93ec76dd7
         }
 
         select_category_setting = flet.Dropdown(

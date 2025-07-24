@@ -13,6 +13,7 @@ class File:
 
     def create(self, json_data) -> bool:
         if self.exists(): return False
+
         with open(f"{self.path}/{self.file_name}", 'w', encoding="utf-8") as file:
             yaml.safe_dump(json_data, file)
 

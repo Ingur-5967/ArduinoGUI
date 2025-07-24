@@ -24,7 +24,7 @@ class HomeModule(SceneModule):
 
     def init(self, page: flet.Page, scene: Scene) -> flet.Control:
         def refresh_data_stream_reader(e):
-            data_stream_reader_title.value = f"Полученные данные за {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            data_stream_reader_title.value = f"Полученные данные за {datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S')}"
 
             refresh_button.disabled = True
             page.update()
@@ -64,8 +64,8 @@ class HomeModule(SceneModule):
             parsed_entry_humidity = humidity_text.value.split(" ")[1]
 
             lines['data'][f'{parsed_entry_date} {parsed_entry_date_time}'] = {
-                'temperature': parsed_entry_temperature,
-                'humidity': parsed_entry_humidity
+                'temperature': parsed_entry_temperature if parsed_entry_temperature[-1].isdigit() else parsed_entry_temperature[0:len(parsed_entry_temperature) - 2],
+                'humidity': parsed_entry_humidity if parsed_entry_temperature[-1].isdigit() else parsed_entry_humidity[0:len(parsed_entry_humidity) - 1]
             }
 
             data_file.write(lines)
