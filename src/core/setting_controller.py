@@ -21,6 +21,7 @@ class SettingConstSection:
     DATA_VIEW_TYPE="data_view_type"
 
     WORK_TIME="work_time"
+    AUDIO_DIRECTORY_STORAGE="audio_directory_storage"
 
 class SettingController:
 

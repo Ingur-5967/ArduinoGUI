@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+from ctypes import *
 
 import flet
 from flet.core.page import Page
@@ -23,6 +24,9 @@ class Application:
     def __init__(self, scene: Scene):
         self.scene = scene
         self.scene.init_views(StartView(), HomeView(), SettingsView(), HistoryView(), StatisticView())
+        self.ignore_notification = False
+        self.audio_player = CDLL("core/arduinoDll.dll")
+        self.audio_player.play_alarm.argtypes = [c_wchar_p]
 
     async def main(self, page: Page):
             page.title = "Метеостанция"
@@ -53,6 +57,30 @@ class Application:
                 cooldown = SettingController().get_parameter_by_key(SettingConstSection.COOLDOWN_STREAM_READER).get_value_section()
                 active_port = SettingController().get_parameter_by_key(SettingConstSection.SELECTED_LISTEN_COM_PORT).get_value_section()
                 arduino_receiver = ArduinoReceiver()
+                def close_and_ignore_banner(e):
+                    page.close(banner)
+                    self.ignore_notification = True
+                    self.opened_notification = False
+
+                def close_banner(e):
+                    page.close(banner)
+                    self.opened_notification = False
+
+                close_and_ignore_banner_button_style = flet.ButtonStyle(color=flet.Colors.RED)
+                close_banner_button_style = flet.ButtonStyle(color=flet.Colors.BLUE)
+                banner = flet.Banner(
+                    bgcolor=flet.Colors.AMBER_100,
+                    leading=flet.Icon(flet.Icons.WARNING_ROUNDED, color=flet.Colors.AMBER, size=40),
+                    content=flet.Text(),
+                    actions=[
+                        flet.TextButton(
+                            text="Ignore", style=close_and_ignore_banner_button_style, on_click=close_and_ignore_banner
+                        ),
+                        flet.TextButton(
+                            text="Close", style=close_banner_button_style, on_click=close_banner
+                        )
+                    ]
+                )
                 if (cooldown is None or active_port is None) or len(port_controller.get_arduino_ports()) == 0 or not arduino_receiver._check_connection():
                     await asyncio.sleep(1)
                 else:
@@ -71,14 +99,21 @@ class Application:
                         'humidity': received_humidity if received_humidity[-1].isdigit() else received_humidity[0:len(received_humidity) - 1]
                     }
 
-                    if float(received_temperature) > 30: print("warning")
-
                     file_stream_writer.write(file_lines)
+
+                    if not self.ignore_notification and int(received_temperature[:2]) >= 30:
+                        self.audio_player.play_alarm("assets/doop.wav")
+                        banner.content = flet.Text(
+                            value="Зафиксирована пороговая температура (30). Рекомендуем переместиться ближе к водоемам"
+                        )
+                        page.add(banner)
+                        page.open(banner)
 
                     await asyncio.sleep(float(cooldown) * 60)
 
     def get_scene_instance(self):
         return self.scene
+
 
 application = Application(Scene())
 
